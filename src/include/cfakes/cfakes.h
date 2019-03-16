@@ -141,8 +141,6 @@ static cfakes_result_t _cfakes_execute_test(cfakes_unit_test_t *test) {
 	else {
 		result = CFAKES_TEST_RESULT_NOT_FOUND;
 	}
-
-
 	return result;
 }
 
@@ -217,42 +215,39 @@ static cfakes_result_t _cfakes_find_and_execute(cfakes_unit_test_t *tests, size_
 	
 	cfakes_unit_test_t *selected_tests = malloc(sizeof(cfakes_unit_test_t) * selected_tests_count);
 	cfakes_unit_test_t *selected_tests_tmp = selected_tests;
-	size_t tests_found = 0;
-	int test_not_found = 1;
+	size_t found_tests_count = 0;
+	int test_found = 0;
 
 	for (int arg = _cfakes_context.arguments_count; arg < argc; ++arg) {
 		cfakes_unit_test_t *test = tests;
-		test_not_found = 1;
+		test_found = 0;
 		for (size_t counter = 0; counter < tests_count; ++counter) {
 			char *name = test->name;
 			if (_strcmpi(name, argv[arg]) == 0) {
 				*selected_tests_tmp = *test;
 				selected_tests_tmp++;
-				tests_found++;
-				test_not_found = 0;
+				found_tests_count++;
+				test_found = 1;
 				break;
 			}
 			test++;
 		}
 
-		if (test_not_found) {
+		if (!test_found) {
 			selected_tests_tmp->name = argv[arg];
-			selected_tests_tmp->cleanup_routine = NULL;
-			selected_tests_tmp->setup_routine = NULL;
-			selected_tests_tmp->test_routine = NULL;
 			selected_tests_tmp->result = CFAKES_TEST_RESULT_NOT_FOUND;
 			selected_tests_tmp++;
-			tests_found++;
+			found_tests_count++;
 		}
 	}
 
-	cfakes_result_t result = _cfakes_execute_all(selected_tests, tests_found);
+	cfakes_result_t result = _cfakes_execute_all(selected_tests, found_tests_count);
 	free(selected_tests);
 	return result;
 }
 
 static cfakes_result_t _cfakes_execute_tests(cfakes_unit_test_t *tests, size_t tests_count, int argc, char** argv) {
-	cfakes_result_t result = CFAKES_TEST_RESULT_SUCCEED;
+	cfakes_result_t result = CFAKES_TEST_RESULT_UNKNOWN;
 	if (argc == _cfakes_context.arguments_count) {
 		result = _cfakes_execute_all(tests, tests_count);
 	}
