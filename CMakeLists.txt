@@ -1,8 +1,7 @@
 cmake_minimum_required (VERSION 3.14)
-
-set(CFAKES_LIB_NAME cfakes)
-include(build/settings.cmake)
-
-project(${CFAKES_LIB_NAME} C)
-add_subdirectory(src)
+set(CFAKES_LIB cfakes)
+project(${CFAKES_LIB} LANGUAGES C)
+add_library(${CFAKES_LIB} INTERFACE)
+set(CFAKES_LIB_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include/)
+enable_testing()
 add_subdirectory(tests)
