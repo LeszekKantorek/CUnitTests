@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include <assert.h>
 #include "cfakes/cfakes.h"
 #include "simple_test.c"
 

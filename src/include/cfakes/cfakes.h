@@ -1,6 +1,7 @@
 #ifndef _cfakes_cfakes_h_
 #define _cfakes_cfakes_h_
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
