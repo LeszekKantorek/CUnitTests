@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.14)
-set(CFAKES_LIB cfakes)
-project(${CFAKES_LIB} LANGUAGES C)
+set(LIB_CFAKES cfakes)
+project(${LIB_CFAKES} LANGUAGES C)
 
 add_subdirectory(src)
 
