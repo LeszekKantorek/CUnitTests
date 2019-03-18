@@ -1,10 +1,8 @@
 cmake_minimum_required (VERSION 3.14)
 set(CFAKES_LIB cfakes)
 project(${CFAKES_LIB} LANGUAGES C)
-add_library(${CFAKES_LIB} INTERFACE)
-set(CFAKES_LIB_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include/)
+
+add_subdirectory(src)
+
 enable_testing()
 add_subdirectory(tests)
-
-#install(TARGETS cfakes EXPORT cfakes)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/include/cfakes/cfakes.h DESTINATION "include/cfakes")

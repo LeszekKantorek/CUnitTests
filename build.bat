@@ -4,7 +4,6 @@ SETLOCAL
 set COMMAND=%1
 set CONFIG=%2
 set BUILD_DIR=_build
-set INSTALL_DIR=_output
 set ARCH=x64
 
 if "%CONFIG%"=="" set CONFIG=Debug
@@ -18,7 +17,6 @@ exit /B %ERRORLEVEL%
 
 :clean
     rmdir /s /q %BUILD_DIR%
-    rmdir /s /q %INSTALL_DIR%
 exit /B %ERRORLEVEL%
 
 :code
@@ -36,13 +34,3 @@ exit /B %ERRORLEVEL%
     ctest -C "%CONFIG%" -V
     cd ..
 exit /B %ERRORLEVEL%
-
-:install
-    call :clean
-    call :test
-    pwd
-    if %ERRORLEVEL%==0 (
-       cmake --build "%BUILD_DIR%" --target INSTALL --config "%CONFIG%" 
-    ) else (
-        echo Build and test failed. Installation cancelled.
-    )
