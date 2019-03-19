@@ -15,7 +15,7 @@ void _status_should_be_failed(){
 }
 
 void assert_true_succeed_test(){
-    cfakes_assert_true(1, "Should be true");
+	cfakes_assert_true(1, "Should be true");
     _status_should_be_unknown();
 }
 

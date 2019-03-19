@@ -7,9 +7,9 @@ set BUILD_DIR=_build
 set ARCH=x64
 
 if "%CONFIG%"=="" set CONFIG=Debug
-IF "%COMMAND%" == "" set COMMAND=code
+if "%COMMAND%" == "" set COMMAND=code
 
-echo PARAMS Command:"%COMMAND%" Config:"%CONFIG%" Arch:"%ARCH%" Directory:"%BUILD_DIR%"
+echo Executing build script: Command:%COMMAND% Config:%CONFIG% Architecture:%ARCH%
 
 call :%COMMAND%
 echo Build script complete. Error Level: %ERRORLEVEL%
@@ -20,7 +20,7 @@ exit /B %ERRORLEVEL%
 exit /B %ERRORLEVEL%
 
 :code
-    cmake -G"Visual Studio 15 2017" -A%ARCH% -B%BUILD_DIR% -H.
+    cmake -G"Visual Studio 15 2017" -A%ARCH% -B%BUILD_DIR% .
 exit /B %ERRORLEVEL%
 
 :compile
