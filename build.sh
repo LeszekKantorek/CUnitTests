@@ -24,26 +24,15 @@ BUILD_DIR=_build
 COMMAND=$1
 CONFIG=$2
 
-if [ -z "$COMMAND"]; then COMMAND=code; fi
-if [ -z "$CONFIG"]; then CONFIG=debug; fi
+if [ -z "$COMMAND" ]; then COMMAND=code; fi
+if [ -z "$CONFIG" ]; then CONFIG=debug; fi
 
 echo Executing build script: Command:$COMMAND Configuration:$CONFIG Architecture:$ARCHITECTURE
 
 case $COMMAND in
-"clean")
-    clean
-    ;;
-"code")
-    code
-    ;;
-"compile")
-    compile
-    ;;
-"test")
-    run_tests
-    ;;
-*)
-    echo Unknown command: $COMMAND
-    exit 1
-    ;;
+"clean") clean ;;
+"code") code ;;
+"compile") compile ;;
+"test") run_tests;;
+*) echo Unknown command: $COMMAND;exit 1;;
 esac
