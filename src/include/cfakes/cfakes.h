@@ -291,13 +291,13 @@ static void _cfakes_assertion_failed(char *file, int line, char *message, ...){
 	va_end(args);
 }
 
-#define cfakes_assert_true(expr, message) \
+#define cfakes_assert_true(expr, message, ...) \
 	if(!(expr)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message); \
+		_cfakes_assertion_failed(__FILE__, __LINE__, message, __VA_ARGS__) \
 
-#define cfakes_assert_false(expr, message) \
+#define cfakes_assert_false(expr, message, ...) \
 	if((expr)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message); \
+		_cfakes_assertion_failed(__FILE__, __LINE__, message, __VA_ARGS__) \
 
 #define cfakes_assert_equal(expected, result, message, ...) \
     if ((expected)!=(result)) \
@@ -307,12 +307,12 @@ static void _cfakes_assertion_failed(char *file, int line, char *message, ...){
     if ((expected)==(result)) \
         _cfakes_assertion_failed(__FILE__, __LINE__, message, __VA_ARGS__) \
 
-#define cfakes_assert_null(value, message) \
+#define cfakes_assert_null(value, message, ...) \
     if ((value)!=(NULL)) \
-        _cfakes_assertion_failed(__FILE__, __LINE__, message); \
+        _cfakes_assertion_failed(__FILE__, __LINE__, message, __VA_ARGS__) \
 
-#define cfakes_assert_not_null(value, message) \
+#define cfakes_assert_not_null(value, message,...) \
     if ((value)==(NULL)) \
-        _cfakes_assertion_failed(__FILE__, __LINE__, message); \
+        _cfakes_assertion_failed(__FILE__, __LINE__, message, __VA_ARGS__) \
 
 #endif /* _cfakes_cfakes_h_ */
