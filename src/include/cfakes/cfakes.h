@@ -42,9 +42,9 @@ static _cfakes_context_t _cfakes_context = { .executable_name = NULL,
 static void _cfakes_print_help() {
 	printf("cfakes tests library usage:\n");
 	printf("program_name                  - run all tests in single process\n");
-	printf("program_name /i               - run all tests as separate processes\n");
+	printf("program_name /i               - run all tests in isolation\n");
 	printf("program_name first second ... - run selected tests\n");
-	printf("program_name /i first second  - run selected tests as separate processes\n");
+	printf("program_name /i first second  - run selected tests in isolation\n");
 	printf("program_name /l               - list all tests\n");
 }
 
@@ -190,9 +190,13 @@ static cfakes_result_t _cfakes_verify_results(cfakes_unit_test_t *tests, size_t 
 }
 
 static cfakes_result_t _cfakes_execute_all(cfakes_unit_test_t *tests, size_t tests_count) {
+
+	if (_cfakes_context.execute_tests_in_isolation) {
+		printf("Running tests in isolation\n");
+	}
 	cfakes_unit_test_t *test_to_execute = tests;
 	for (size_t test = 0; test < tests_count; ++test) {
-		printf("Test '%s'", test_to_execute->name);
+		printf("Executing '%s'", test_to_execute->name);
 		test_to_execute->result = _cfakes_execute_test(test_to_execute);
 		switch (test_to_execute->result) {
 		case CFAKES_TEST_RESULT_SUCCEED:
