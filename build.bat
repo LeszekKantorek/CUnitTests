@@ -20,7 +20,7 @@ exit /B %ERRORLEVEL%
 exit /B %ERRORLEVEL%
 
 :code
-    cmake -G"Visual Studio 15 2017" -DCMAKE_INSTALL_PREFIX=%INSTALL_DIR% -A%ARCH% -B%BUILD_DIR% -H.
+    cmake -G"Visual Studio 15 2017" -A%ARCH% -B%BUILD_DIR% -H.
 exit /B %ERRORLEVEL%
 
 :compile
@@ -30,7 +30,7 @@ exit /B %ERRORLEVEL%
 
 :test
     call :compile
-    cd "%BUILD_DIR%"
+    cd "%BUILD_DIR%"/tests/
     ctest -C "%CONFIG%" -V
-    cd ..
+    cd ../../
 exit /B %ERRORLEVEL%

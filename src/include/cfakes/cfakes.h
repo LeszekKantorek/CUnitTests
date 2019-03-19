@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 #define __CFAKES_STR(str) #str
 #define _CFAKES_STR(str) __CFAKES_STR(str)
@@ -267,5 +268,47 @@ static cfakes_result_t _cfakes_run(cfakes_unit_test_t *tests, size_t tests_count
 }
 
 #define cfakes_run(tests, argc, argv) _cfakes_run(tests, sizeof tests / sizeof tests[0], argc, argv)
+
+static void _cfakes_set_test_succeed(){
+	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_SUCCEED;
+}
+
+static void _cfakes_set_test_failed(){
+	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_FAILED;
+}
+
+static void _cfakes_assertion_failed(char *file, int line, char *message, ...){
+	_cfakes_set_test_failed();
+	va_list args;
+    va_start(args, message);
+	printf("\nAssertion failed: ");
+	vprintf(message, args);
+	printf(" File: %s Line: %d", file, line);
+	va_end(args);
+}
+
+#define cfakes_assert_true(expr, message) \
+	if(!(expr)) \
+		_cfakes_assertion_failed(__FILE__, __LINE__, message); \
+
+#define cfakes_assert_false(expr, message) \
+	if((expr)) \
+		_cfakes_assertion_failed(__FILE__, __LINE__, message); \
+
+#define cfakes_assert_equal(expected, result, message, ...) \
+    if ((expected)!=(result)) \
+        _cfakes_assertion_failed(__FILE__, __LINE__, message, __VA_ARGS__ ); \
+
+#define cfakes_assert_not_equal(expected, result, message, ...) \
+    if ((expected)==(result)) \
+        _cfakes_assertion_failed(__FILE__, __LINE__, message, __VA_ARGS__) \
+
+#define cfakes_assert_null(value, message) \
+    if ((value)!=(NULL)) \
+        _cfakes_assertion_failed(__FILE__, __LINE__, message); \
+
+#define cfakes_assert_not_null(value, message) \
+    if ((value)==(NULL)) \
+        _cfakes_assertion_failed(__FILE__, __LINE__, message); \
 
 #endif /* _cfakes_cfakes_h_ */
