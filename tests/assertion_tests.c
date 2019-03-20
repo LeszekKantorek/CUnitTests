@@ -2,15 +2,15 @@
 
 void _status_should_be_unknown(){
     if(_cfakes_context.current_test_result!=CFAKES_TEST_RESULT_UNKNOWN){
-       _cfakes_set_test_failed();
+       cfakes_set_test_failed();
     }
 }
 
 void _status_should_be_failed(){
     if(_cfakes_context.current_test_result==CFAKES_TEST_RESULT_FAILED){
-        _cfakes_set_test_succeed();
+        cfakes_set_test_succeed();
     }else{
-        _cfakes_set_test_failed();
+        cfakes_set_test_failed();
     }
 }
 

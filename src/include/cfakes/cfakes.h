@@ -273,16 +273,16 @@ static cfakes_result_t _cfakes_run(cfakes_unit_test_t *tests, size_t tests_count
 
 #define cfakes_run(tests, argc, argv) _cfakes_run(tests, sizeof tests / sizeof tests[0], argc, argv)
 
-static void _cfakes_set_test_succeed(){
+static void cfakes_set_test_succeed(){
 	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_SUCCEED;
 }
 
-static void _cfakes_set_test_failed(){
+static void cfakes_set_test_failed(){
 	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_FAILED;
 }
 
 static void _cfakes_assertion_failed(char *file, int line, char *message, ...){
-	_cfakes_set_test_failed();
+	cfakes_set_test_failed();
 	va_list args;
     va_start(args, message);
 	printf("\nAssertion failed: ");
