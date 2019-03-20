@@ -42,14 +42,16 @@ program_name /i first second  - run selected tests as separate processes\
 program_name /l               - list all tests
 
 ## Tests executable return codes
-CFAKES_TEST_RESULT_SUCCEED = 0\
-CFAKES_TEST_RESULT_UNKNOWN = 1\
-CFAKES_TEST_RESULT_FAILED = 2\
+``` c
+CFAKES_TEST_RESULT_SUCCEED = 0
+CFAKES_TEST_RESULT_UNKNOWN = 1
+CFAKES_TEST_RESULT_FAILED = 2
 CFAKES_TEST_RESULT_NOT_FOUND = 3
+```
 
 ## Assertions
-Assertions sets CFAKES_TEST_RESULT_FAILED status if given expression fails. \
-``` c
+Assertions sets CFAKES_TEST_RESULT_FAILED status if given expression fails. 
+```
 cfakes_assert_true(expr, message, ...)				
 cfakes_assert_false(expr, message, ...)				
 cfakes_assert_equal(expected, result, message, ...)	
@@ -58,7 +60,7 @@ cfakes_assert_null(value, message, ...)
 cfakes_assert_not_null(value, message,...)
 ```
 Use following functions to set given test result.
-``` c
-cfakes_set_test_succeed()	- set test result to CFAKES_TEST_RESULT_SUCCEED\
-cfakes_set_test_failed();	- set test result to CFAKES_TEST_RESULT_FAILED \
+```
+cfakes_set_test_succeed()	- set test result to CFAKES_TEST_RESULT_SUCCEED
+cfakes_set_test_failed()	- set test result to CFAKES_TEST_RESULT_FAILED 
 ```
