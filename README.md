@@ -14,6 +14,8 @@ int main(int argc, char** argv) {
 	cfakes_initialize(argc, argv);
 	
 	cfakes_test_t tests_to_execute[] =	{
+		cfakes_test(simple_test),
+		cfakes_test_setup(simple_test, simple_test_setup),
 		cfakes_test_setup_cleanup(simple_test, simple_test_setup, simple_test_cleanup),
 	};
 	

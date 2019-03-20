@@ -91,9 +91,9 @@ static int _cfakes_parse_arguments(int argc, char** argv) {
 		return CFAKES_TEST_RESULT_UNKNOWN; \
 	} \
 
-#define cfakes_unit_test(test_routine) {_CFAKES_STR(test_routine), &test_routine, NULL, NULL, CFAKES_TEST_RESULT_SUCCEED}
-#define cfakes_unit_test_setup(test_routine, setup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, NULL, CFAKES_TEST_RESULT_SUCCEED}
-#define cfakes_unit_test_setup_cleanup(test_routine, setup_routine, cleanup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, &cleanup_routine, CFAKES_TEST_RESULT_SUCCEED}
+#define cfakes_test(test_routine) {_CFAKES_STR(test_routine), &test_routine, NULL, NULL, CFAKES_TEST_RESULT_SUCCEED}
+#define cfakes_test_setup(test_routine, setup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, NULL, CFAKES_TEST_RESULT_SUCCEED}
+#define cfakes_test_setup_cleanup(test_routine, setup_routine, cleanup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, &cleanup_routine, CFAKES_TEST_RESULT_SUCCEED}
 
 static void _cfakes_list_tests(cfakes_test_t *tests, size_t tests_count) {
 	for (size_t test = 0; test < tests_count; ++test) {
