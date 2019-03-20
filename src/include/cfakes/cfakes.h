@@ -25,13 +25,13 @@ typedef struct _cfakes_context_t {
 	cfakes_result_t current_test_result;
 }_cfakes_context_t;
 
-typedef struct cfakes_unit_test_t {
+typedef struct cfakes_test_t {
 	char* name;
 	void(*test_routine)();
 	void(*setup_routine)();
 	void(*cleanup_routine)();
 	cfakes_result_t result;
-}cfakes_unit_test_t;
+}cfakes_test_t;
 
 static _cfakes_context_t _cfakes_context = { .executable_name = NULL,
 											.current_test_result = CFAKES_TEST_RESULT_UNKNOWN,
@@ -95,14 +95,14 @@ static int _cfakes_parse_arguments(int argc, char** argv) {
 #define cfakes_unit_test_setup(test_routine, setup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, NULL, CFAKES_TEST_RESULT_SUCCEED}
 #define cfakes_unit_test_setup_cleanup(test_routine, setup_routine, cleanup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, &cleanup_routine, CFAKES_TEST_RESULT_SUCCEED}
 
-static void _cfakes_list_tests(cfakes_unit_test_t *tests, size_t tests_count) {
+static void _cfakes_list_tests(cfakes_test_t *tests, size_t tests_count) {
 	for (size_t test = 0; test < tests_count; ++test) {
 		printf("%s\n", tests->name);
 		tests++;
 	}
 }
 
-static cfakes_result_t _cfakes_execute_test_in_process(cfakes_unit_test_t *test) {
+static cfakes_result_t _cfakes_execute_test_in_process(cfakes_test_t *test) {
 	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_UNKNOWN;
 	if (test->setup_routine != NULL) {
 		test->setup_routine();
@@ -119,7 +119,7 @@ static cfakes_result_t _cfakes_execute_test_in_process(cfakes_unit_test_t *test)
 	return _cfakes_context.current_test_result;
 }
 
-static cfakes_result_t _cfakes_execute_test_in_isolation(cfakes_unit_test_t *test) {
+static cfakes_result_t _cfakes_execute_test_in_isolation(cfakes_test_t *test) {
 	int test_command_size = snprintf(NULL, 0, _CFAKES_RUN_TEST_COMMAND_FORMAT, _cfakes_context.executable_name, test->name);
 	++test_command_size;
 	char* test_command = malloc(test_command_size);
@@ -130,7 +130,7 @@ static cfakes_result_t _cfakes_execute_test_in_isolation(cfakes_unit_test_t *tes
 	return test_command_result >= CFAKES_TEST_RESULT_SUCCEED && test_command_result <= CFAKES_TEST_RESULT_NOT_FOUND ? test_command_result : CFAKES_TEST_RESULT_UNKNOWN;
 }
 
-static cfakes_result_t _cfakes_execute_test(cfakes_unit_test_t *test) {
+static cfakes_result_t _cfakes_execute_test(cfakes_test_t *test) {
 	cfakes_result_t result = CFAKES_TEST_RESULT_UNKNOWN;
 	if (test->result != CFAKES_TEST_RESULT_NOT_FOUND) {
 		if (_cfakes_context.execute_tests_in_isolation) {
@@ -146,7 +146,7 @@ static cfakes_result_t _cfakes_execute_test(cfakes_unit_test_t *test) {
 	return result;
 }
 
-static cfakes_result_t _cfakes_verify_results(cfakes_unit_test_t *tests, size_t tests_count) {
+static cfakes_result_t _cfakes_verify_results(cfakes_test_t *tests, size_t tests_count) {
 	unsigned tests_succeed = 0;
 	unsigned tests_unknown = 0;
 	unsigned tests_failed = 0;
@@ -189,12 +189,12 @@ static cfakes_result_t _cfakes_verify_results(cfakes_unit_test_t *tests, size_t 
 	return CFAKES_TEST_RESULT_SUCCEED;
 }
 
-static cfakes_result_t _cfakes_execute_all(cfakes_unit_test_t *tests, size_t tests_count) {
+static cfakes_result_t _cfakes_execute_all(cfakes_test_t *tests, size_t tests_count) {
 
 	if (_cfakes_context.execute_tests_in_isolation) {
 		printf("Running tests in isolation\n");
 	}
-	cfakes_unit_test_t *test_to_execute = tests;
+	cfakes_test_t *test_to_execute = tests;
 	for (size_t test = 0; test < tests_count; ++test) {
 		printf("Executing '%s'", test_to_execute->name);
 		test_to_execute->result = _cfakes_execute_test(test_to_execute);
@@ -216,16 +216,16 @@ static cfakes_result_t _cfakes_execute_all(cfakes_unit_test_t *tests, size_t tes
 	return _cfakes_verify_results(tests, tests_count);
 }
 
-static cfakes_result_t _cfakes_find_and_execute(cfakes_unit_test_t *tests, size_t tests_count, int argc, char** argv) {
+static cfakes_result_t _cfakes_find_and_execute(cfakes_test_t *tests, size_t tests_count, int argc, char** argv) {
 	size_t selected_tests_count = argc - _cfakes_context.arguments_count;
 	
-	cfakes_unit_test_t *selected_tests = malloc(sizeof(cfakes_unit_test_t) * selected_tests_count);
-	cfakes_unit_test_t *selected_tests_tmp = selected_tests;
+	cfakes_test_t *selected_tests = malloc(sizeof(cfakes_test_t) * selected_tests_count);
+	cfakes_test_t *selected_tests_tmp = selected_tests;
 	size_t found_tests_count = 0;
 	int test_found = 0;
 
 	for (int arg = _cfakes_context.arguments_count; arg < argc; ++arg) {
-		cfakes_unit_test_t *test = tests;
+		cfakes_test_t *test = tests;
 		test_found = 0;
 		for (size_t counter = 0; counter < tests_count; ++counter) {
 			char *name = test->name;
@@ -252,7 +252,7 @@ static cfakes_result_t _cfakes_find_and_execute(cfakes_unit_test_t *tests, size_
 	return result;
 }
 
-static cfakes_result_t _cfakes_execute_tests(cfakes_unit_test_t *tests, size_t tests_count, int argc, char** argv) {
+static cfakes_result_t _cfakes_execute_tests(cfakes_test_t *tests, size_t tests_count, int argc, char** argv) {
 	cfakes_result_t result = CFAKES_TEST_RESULT_UNKNOWN;
 	if (argc == _cfakes_context.arguments_count) {
 		result = _cfakes_execute_all(tests, tests_count);
@@ -263,7 +263,7 @@ static cfakes_result_t _cfakes_execute_tests(cfakes_unit_test_t *tests, size_t t
 	return result;
 }
 
-static cfakes_result_t _cfakes_run(cfakes_unit_test_t *tests, size_t tests_count, int argc, char** argv) {
+static cfakes_result_t _cfakes_run(cfakes_test_t *tests, size_t tests_count, int argc, char** argv) {
 	if (_cfakes_context.list_tests) {
 		_cfakes_list_tests(tests, tests_count);
 		return CFAKES_TEST_RESULT_SUCCEED;

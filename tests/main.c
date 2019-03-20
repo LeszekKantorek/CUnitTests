@@ -4,7 +4,7 @@
 int main(int argc, char** argv) {
 	cfakes_initialize(argc, argv);
 	
-	cfakes_unit_test_t tests_to_execute[] =	{
+	cfakes_test_t tests_to_execute[] =	{
 		cfakes_unit_test(simple_test),
 		cfakes_unit_test_setup(simple_test_2_routine, simple_test_2_setup),
 		cfakes_unit_test_setup_cleanup(simple_test_3_routine, simple_test_3_setup, simple_test_3_cleanup),
