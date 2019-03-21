@@ -15,29 +15,29 @@ typedef enum cfakes_result_t {
 	CFAKES_TEST_RESULT_UNKNOWN = 1,
 	CFAKES_TEST_RESULT_FAILED = 2,
 	CFAKES_TEST_RESULT_NOT_FOUND = 3,
-}cfakes_result_t;
+} cfakes_result_t;
 
 typedef struct _cfakes_context_t {
-	char* executable_name;
+	char *executable_name;
 	int execute_tests_in_isolation;
 	int list_tests;
 	int arguments_count;
 	cfakes_result_t current_test_result;
-}_cfakes_context_t;
+} _cfakes_context_t;
 
 typedef struct cfakes_test_t {
-	char* name;
-	void(*test_routine)();
-	void(*setup_routine)();
-	void(*cleanup_routine)();
+	char *name;
+	void (*test_routine)();
+	void (*setup_routine)();
+	void (*cleanup_routine)();
 	cfakes_result_t result;
-}cfakes_test_t;
+} cfakes_test_t;
 
-static _cfakes_context_t _cfakes_context = { .executable_name = NULL,
+static _cfakes_context_t _cfakes_context = {.executable_name = NULL,
 											.current_test_result = CFAKES_TEST_RESULT_UNKNOWN,
 											.execute_tests_in_isolation = 0,
 											.list_tests = 0,
-											.arguments_count = 1 };
+											.arguments_count = 1};
 
 static void _cfakes_print_help() {
 	printf("cfakes tests library usage:\n");
@@ -48,7 +48,7 @@ static void _cfakes_print_help() {
 	printf("program_name /l               - list all tests\n");
 }
 
-static int _cfakes_parse_arguments(int argc, char** argv) {
+static int _cfakes_parse_arguments(int argc, char **argv) {
 	_cfakes_context.executable_name = argv[0];
 	int result = 0;
 
@@ -56,44 +56,46 @@ static int _cfakes_parse_arguments(int argc, char** argv) {
 	int flag = 0;
 	for (int arg = 1; arg < argc && result == 0; arg++) {
 		switch ((int)argv[arg][0]) {
-		case '-':
-		case '/':
-			arg_length = strlen(argv[arg]);
-			if (arg_length == 2) {
-				_cfakes_context.arguments_count++;
-				flag = argv[arg][1];
-				switch ((int)flag)
-				{
-				case 'i':
-				case 'I':
-					_cfakes_context.execute_tests_in_isolation = 1;
-					break;
-				case 'l':
-				case 'L':
-					_cfakes_context.list_tests = 1;
-					break;
-				default:
-					result = 1;
-					break;
+			case '-':
+			case '/':
+				arg_length = strlen(argv[arg]);
+				if (arg_length == 2) {
+					_cfakes_context.arguments_count++;
+					flag = argv[arg][1];
+					switch ((int)flag) {
+						case 'i':
+						case 'I':
+							_cfakes_context.execute_tests_in_isolation = 1;
+							break;
+						case 'l':
+						case 'L':
+							_cfakes_context.list_tests = 1;
+							break;
+						default:
+							result = 1;
+							break;
+					}
 				}
-			}
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
 		}
 	}
 	return result;
 }
 
-#define cfakes_initialize(argc, argv)  \
-	if(_cfakes_parse_arguments(argc, argv)){ \
-		_cfakes_print_help(); \
-		return CFAKES_TEST_RESULT_UNKNOWN; \
-	} \
+#define cfakes_initialize(argc, argv)          \
+	if (_cfakes_parse_arguments(argc, argv)) { \
+		_cfakes_print_help();                  \
+		return CFAKES_TEST_RESULT_UNKNOWN;     \
+	}
 
-#define cfakes_test(test_routine) {_CFAKES_STR(test_routine), &test_routine, NULL, NULL, CFAKES_TEST_RESULT_SUCCEED}
-#define cfakes_test_setup(test_routine, setup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, NULL, CFAKES_TEST_RESULT_SUCCEED}
-#define cfakes_test_setup_cleanup(test_routine, setup_routine, cleanup_routine) {_CFAKES_STR(test_routine), &test_routine, &setup_routine, &cleanup_routine, CFAKES_TEST_RESULT_SUCCEED}
+#define cfakes_test(test_routine) \
+	{ _CFAKES_STR(test_routine), &test_routine, NULL, NULL, CFAKES_TEST_RESULT_SUCCEED }
+#define cfakes_test_setup(test_routine, setup_routine) \
+	{ _CFAKES_STR(test_routine), &test_routine, &setup_routine, NULL, CFAKES_TEST_RESULT_SUCCEED }
+#define cfakes_test_setup_cleanup(test_routine, setup_routine, cleanup_routine) \
+	{ _CFAKES_STR(test_routine), &test_routine, &setup_routine, &cleanup_routine, CFAKES_TEST_RESULT_SUCCEED }
 
 static void _cfakes_list_tests(cfakes_test_t *tests, size_t tests_count) {
 	for (size_t test = 0; test < tests_count; ++test) {
@@ -122,7 +124,7 @@ static cfakes_result_t _cfakes_execute_test_in_process(cfakes_test_t *test) {
 static cfakes_result_t _cfakes_execute_test_in_isolation(cfakes_test_t *test) {
 	int test_command_size = snprintf(NULL, 0, _CFAKES_RUN_TEST_COMMAND_FORMAT, _cfakes_context.executable_name, test->name);
 	++test_command_size;
-	char* test_command = malloc(test_command_size);
+	char *test_command = malloc(test_command_size);
 	snprintf(test_command, test_command_size, _CFAKES_RUN_TEST_COMMAND_FORMAT, _cfakes_context.executable_name, test->name);
 	int test_command_result = system(test_command);
 	free(test_command);
@@ -135,12 +137,10 @@ static cfakes_result_t _cfakes_execute_test(cfakes_test_t *test) {
 	if (test->result != CFAKES_TEST_RESULT_NOT_FOUND) {
 		if (_cfakes_context.execute_tests_in_isolation) {
 			result = _cfakes_execute_test_in_isolation(test);
-		}
-		else {
+		} else {
 			result = _cfakes_execute_test_in_process(test);
 		}
-	}
-	else {
+	} else {
 		result = CFAKES_TEST_RESULT_NOT_FOUND;
 	}
 	return result;
@@ -156,20 +156,20 @@ static cfakes_result_t _cfakes_verify_results(cfakes_test_t *tests, size_t tests
 
 	for (size_t test = 0; test < tests_count; ++test) {
 		switch (tests->result) {
-		case CFAKES_TEST_RESULT_SUCCEED:
-			tests_succeed++;
-			break;
-		case CFAKES_TEST_RESULT_FAILED:
-			printf("FAILED: '%s'\n", tests->name);
-			tests_failed++;
-			break;
-		case CFAKES_TEST_RESULT_NOT_FOUND:
-			printf("NOT_FOUND: '%s'\n", tests->name);
-			tests_not_found++;
-			break;
-		default:
-			tests_unknown++;
-			printf("RESULT_UNKNOWN: '%s'\n", tests->name);
+			case CFAKES_TEST_RESULT_SUCCEED:
+				tests_succeed++;
+				break;
+			case CFAKES_TEST_RESULT_FAILED:
+				printf("FAILED: '%s'\n", tests->name);
+				tests_failed++;
+				break;
+			case CFAKES_TEST_RESULT_NOT_FOUND:
+				printf("NOT_FOUND: '%s'\n", tests->name);
+				tests_not_found++;
+				break;
+			default:
+				tests_unknown++;
+				printf("RESULT_UNKNOWN: '%s'\n", tests->name);
 		}
 		tests++;
 	}
@@ -178,11 +178,9 @@ static cfakes_result_t _cfakes_verify_results(cfakes_test_t *tests, size_t tests
 
 	if (tests_unknown > 0) {
 		return CFAKES_TEST_RESULT_UNKNOWN;
-	}
-	else if (tests_not_found > 0) {
+	} else if (tests_not_found > 0) {
 		return CFAKES_TEST_RESULT_NOT_FOUND;
-	}
-	else if (tests_failed > 0) {
+	} else if (tests_failed > 0) {
 		return CFAKES_TEST_RESULT_FAILED;
 	}
 
@@ -199,26 +197,26 @@ static cfakes_result_t _cfakes_execute_all(cfakes_test_t *tests, size_t tests_co
 		printf("Executing '%s'", test_to_execute->name);
 		test_to_execute->result = _cfakes_execute_test(test_to_execute);
 		switch (test_to_execute->result) {
-		case CFAKES_TEST_RESULT_SUCCEED:
-			printf(" ...SUCCEED\n");
-			break;
-		case CFAKES_TEST_RESULT_FAILED:
-			printf(" ...FAILED\n");
-			break;
-		case CFAKES_TEST_RESULT_NOT_FOUND:
-			printf(" ...NOT_FOUND\n");
-			break;
-		default:
-			printf(" ...RESULT_UNKNOWN\n");
+			case CFAKES_TEST_RESULT_SUCCEED:
+				printf(" ...SUCCEED\n");
+				break;
+			case CFAKES_TEST_RESULT_FAILED:
+				printf(" ...FAILED\n");
+				break;
+			case CFAKES_TEST_RESULT_NOT_FOUND:
+				printf(" ...NOT_FOUND\n");
+				break;
+			default:
+				printf(" ...RESULT_UNKNOWN\n");
 		}
 		test_to_execute++;
 	}
 	return _cfakes_verify_results(tests, tests_count);
 }
 
-static cfakes_result_t _cfakes_find_and_execute(cfakes_test_t *tests, size_t tests_count, int argc, char** argv) {
+static cfakes_result_t _cfakes_find_and_execute(cfakes_test_t *tests, size_t tests_count, int argc, char **argv) {
 	size_t selected_tests_count = argc - _cfakes_context.arguments_count;
-	
+
 	cfakes_test_t *selected_tests = malloc(sizeof(cfakes_test_t) * selected_tests_count);
 	cfakes_test_t *selected_tests_tmp = selected_tests;
 	size_t found_tests_count = 0;
@@ -252,18 +250,17 @@ static cfakes_result_t _cfakes_find_and_execute(cfakes_test_t *tests, size_t tes
 	return result;
 }
 
-static cfakes_result_t _cfakes_execute_tests(cfakes_test_t *tests, size_t tests_count, int argc, char** argv) {
+static cfakes_result_t _cfakes_execute_tests(cfakes_test_t *tests, size_t tests_count, int argc, char **argv) {
 	cfakes_result_t result = CFAKES_TEST_RESULT_UNKNOWN;
 	if (argc == _cfakes_context.arguments_count) {
 		result = _cfakes_execute_all(tests, tests_count);
-	}
-	else if (argc > _cfakes_context.arguments_count) {
+	} else if (argc > _cfakes_context.arguments_count) {
 		result = _cfakes_find_and_execute(tests, tests_count, argc, argv);
 	}
 	return result;
 }
 
-static cfakes_result_t _cfakes_run(cfakes_test_t *tests, size_t tests_count, int argc, char** argv) {
+static cfakes_result_t _cfakes_run(cfakes_test_t *tests, size_t tests_count, int argc, char **argv) {
 	if (_cfakes_context.list_tests) {
 		_cfakes_list_tests(tests, tests_count);
 		return CFAKES_TEST_RESULT_SUCCEED;
@@ -273,18 +270,18 @@ static cfakes_result_t _cfakes_run(cfakes_test_t *tests, size_t tests_count, int
 
 #define cfakes_run(tests, argc, argv) _cfakes_run(tests, sizeof tests / sizeof tests[0], argc, argv)
 
-static void cfakes_set_test_succeed(){
+static void cfakes_set_test_succeed() {
 	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_SUCCEED;
 }
 
-static void cfakes_set_test_failed(){
+static void cfakes_set_test_failed() {
 	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_FAILED;
 }
 
-static void _cfakes_assertion_failed(char *file, int line, char *message, ...){
+static void _cfakes_assertion_failed(char *file, int line, char *message, ...) {
 	cfakes_set_test_failed();
 	va_list args;
-    va_start(args, message);
+	va_start(args, message);
 	printf("\nAssertion failed: ");
 	vprintf(message, args);
 	printf(" File: %s Line: %d", file, line);
@@ -292,27 +289,27 @@ static void _cfakes_assertion_failed(char *file, int line, char *message, ...){
 }
 
 #define cfakes_assert_true(expr, message, ...) \
-	if(!(expr)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__) \
+	if (!(expr))                               \
+	_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
 #define cfakes_assert_false(expr, message, ...) \
-	if((expr)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__) \
+	if ((expr))                                 \
+	_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
 #define cfakes_assert_equal(expected, result, message, ...) \
-    if ((expected)!=(result)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__); \
+	if ((expected) != (result))                             \
+		_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__);
 
 #define cfakes_assert_not_equal(expected, result, message, ...) \
-    if ((expected)==(result)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__) \
+	if ((expected) == (result))                                 \
+	_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
 #define cfakes_assert_null(value, message, ...) \
-    if ((value)!=(NULL)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__) \
+	if ((value) != (NULL))                      \
+	_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define cfakes_assert_not_null(value, message,...) \
-    if ((value)==(NULL)) \
-		_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__) \
+#define cfakes_assert_not_null(value, message, ...) \
+	if ((value) == (NULL))                          \
+	_cfakes_assertion_failed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
 #endif /* _cfakes_cfakes_h_ */
