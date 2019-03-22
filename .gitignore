@@ -2,3 +2,4 @@ _tmp
 _output
 _build
 .vs
+.DS_Store

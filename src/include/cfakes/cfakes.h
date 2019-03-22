@@ -270,7 +270,7 @@ static cfakes_result_t _cfakes_run(cfakes_test_t *tests, size_t tests_count, int
 
 #define cfakes_run(tests, argc, argv) _cfakes_run(tests, sizeof tests / sizeof tests[0], argc, argv)
 
-static void cfakes_set_test_succeed() {
+static inline void cfakes_set_test_succeed() {
 	_cfakes_context.current_test_result = CFAKES_TEST_RESULT_SUCCEED;
 }
 
