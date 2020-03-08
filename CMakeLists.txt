@@ -3,7 +3,7 @@ project(CUnitTests VERSION 1.0.0 LANGUAGES C)
 
 message("Adding ${PROJECT_NAME} library")
 add_library(CUnitTests INTERFACE)
-target_include_directories(CUnitTests INTERFACE headers/)
+target_include_directories(CUnitTests INTERFACE include/)
 
 if(BUILD_TESTING)
     message("${PROJECT_NAME} library testing enabled")
