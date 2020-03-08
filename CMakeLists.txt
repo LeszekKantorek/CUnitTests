@@ -5,7 +5,7 @@ message("Adding ${PROJECT_NAME} library")
 add_library(CUnitTests INTERFACE)
 target_include_directories(CUnitTests INTERFACE include/)
 
-if(BUILD_TESTING)
+if(CUNITTESTS_TESTING)
     message("${PROJECT_NAME} library testing enabled")
     add_executable(CUnitTestsExample tests/example.c)
     target_link_libraries(CUnitTestsExample CUnitTests)
