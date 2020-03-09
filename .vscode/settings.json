@@ -5,7 +5,7 @@
     "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, AlignTrailingComments: true, UseTab: Always, IndentWidth: 4, TabWidth: 4, AllowShortIfStatementsOnASingleLine: true, IndentCaseLabels: true, ColumnLimit: 120}",
     "cmake.configureSettings": {
         "CUNITTESTS_TESTING":true,
-        "CMAKE_C_FLAGS":"-Werror -Wall -Wpedantic -Wextra"
+        "CUNITTESTS_FLAGS":true,
     },
     "editor.fontSize": 18,
     "files.associations": {}
