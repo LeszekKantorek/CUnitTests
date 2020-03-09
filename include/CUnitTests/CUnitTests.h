@@ -283,8 +283,8 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 	va_end(args);
 }
 
-#define test(name, code)                                                                                               \
-	void ___CUnitTests_test_routine_##name() { code }                                                                  \
+#define test(name, ...)                                                                                               \
+	void ___CUnitTests_test_routine_##name() { __VA_ARGS__ }                                                                  \
 	__attribute__((constructor)) void ___CUnitTests_register_test_##name() {                                           \
 		int id = __COUNTER__;                                                                                          \
 		__CUnitTests_Global_testsCount++;                                                                              \
@@ -293,9 +293,9 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 		__CUnitTests_Global_tests[id].result = __CUnitTests_Error_NotExecuted;                                         \
 	}
 
-#define test_failed() __CUnitTests_setTestFailed()
-
-#define test_succeed() __CUnitTests_setTestSucceed()
+#define test_set_failed() __CUnitTests_setTestFailed()
+#define test_set_succeed() __CUnitTests_setTestSucceed()
+#define test_failed()  __CUnitTests_Global_currentTest->result == __CUnitTests_Error_Failed
 
 #define test_assert_true(expr, message, ...)                                                                           \
 	if (!(expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)

@@ -26,9 +26,9 @@ SOFTWARE.
 
 static void error_should_be(__CUnitTests_Error error){
     if(__CUnitTests_Global_currentTest->result != error){
-        test_failed();
+        test_set_failed();
     }else{
-        test_succeed();
+        test_set_succeed();
     }
 }
 
@@ -40,6 +40,16 @@ test(assert_true_success,{
 test(assert_true_failure,{
     test_assert_true(0, "Should be true");
     error_should_be(__CUnitTests_Error_Failed);
+});
+
+test(assert_check_failure,{
+    test_assert_true(0, "Should be true");
+
+    if(test_failed()){
+        test_set_succeed();
+    }else{
+         test_set_failed();
+    }
 });
 
 test(assert_false_success,{

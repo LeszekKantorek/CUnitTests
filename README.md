@@ -39,8 +39,20 @@ test_assert_not_null(value, message,...);
 ```
 Use following macros to set given test result:
 ``` c
-test_succeed(); //set current test result to Succeed.
-test_failed();  //set current test result to Failed. 
+test_set_succeed(); //set current test result to Succeed.
+test_set_failed();  //set current test result to Failed. 
+```
+Use 'test_failed()' to check if test failed
+
+``` c
+test(check_failure,{
+    ...
+    test_assert_true(0, "Should be true");
+    if(test_failed()){
+        return;
+    }
+    ...
+});
 ```
 
 ## CMake installation
