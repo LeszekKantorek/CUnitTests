@@ -1,9 +1,11 @@
 {
-    "editor.fontSize": 18,
     "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
     "C_Cpp.default.compilerPath": "gcc",
     "C_Cpp.default.cStandard": "c11",
     "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, AlignTrailingComments: true, UseTab: Always, IndentWidth: 4, TabWidth: 4, AllowShortIfStatementsOnASingleLine: true, IndentCaseLabels: true, ColumnLimit: 120}",
-    "files.associations": {
-    }
+    "cmake.configureSettings": {
+        "CUNITTESTS_TESTING":true
+    },
+    "editor.fontSize": 18,
+    "files.associations": {}
 }
