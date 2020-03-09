@@ -42,7 +42,7 @@ Use following macros to set given test result:
 test_set_succeed(); //set current test result to Succeed.
 test_set_failed();  //set current test result to Failed. 
 ```
-Use 'test_failed()' to check if test failed
+Use `test_failed()` to check if test has failed
 
 ``` c
 test(check_failure,{
