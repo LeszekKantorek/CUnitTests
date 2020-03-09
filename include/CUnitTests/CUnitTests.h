@@ -62,11 +62,11 @@ typedef struct __CUnitTests_Context {
 	__CUnitTests_ExecutionMode executionMode;
 	__CUnitTests_Error executionResult;
 	__CUnitTests_Test *testsToExecute;
-	int testsToExecuteCount;
+	unsigned testsToExecuteCount;
 } __CUnitTests_Context;
 
 static __CUnitTests_Test __CUnitTests_Global_tests[__CUNIT_TESTS_MAX];
-static int __CUnitTests_Global_testsCount = 0;
+static unsigned __CUnitTests_Global_testsCount = 0;
 static __CUnitTests_Test *__CUnitTests_Global_currentTest = NULL;
 
 static char *__CUnitTests_getFileNameFromPath(char *filePath) {
@@ -155,7 +155,7 @@ static __CUnitTests_Context *__CUnitTests_createContext(int argc, char *argv[]) 
 }
 
 static void __CUnitTests_executeTestsInProcess(__CUnitTests_Context *ctx) {
-	for (int testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
+	for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 		__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 		if (test->result == __CUnitTests_Error_NotExecuted) {
 			test->result = __CUnitTests_Error_Succeed;
@@ -168,7 +168,7 @@ static void __CUnitTests_executeTestsInProcess(__CUnitTests_Context *ctx) {
 }
 
 static void __CUnitTests_executeTestsAsSeparateProcess(__CUnitTests_Context *ctx) {
-	for (int testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
+	for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 		__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 		if (test->result == __CUnitTests_Error_NotExecuted) {
 			test->result = __CUnitTests_Error_Succeed;
@@ -193,7 +193,7 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 
 	printf("\n\n%s tests execution failures:", __CUnitTests_getFileNameFromPath(ctx->executableName));
 
-	for (size_t testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
+	for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 		__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 		switch (test->result) {
 			case __CUnitTests_Error_Succeed:
@@ -243,7 +243,7 @@ static void __CUnitTests_listTests(__CUnitTests_Context *ctx) {
 	printf("\n%s                          - list all tests", executableName);
 
 	printf("\nAvailable tests:\n");
-	for (int index = 0; index < __CUnitTests_Global_testsCount; index++) {
+	for (unsigned index = 0; index < __CUnitTests_Global_testsCount; index++) {
 		printf("\n%s", __CUnitTests_Global_tests[index].test_name);
 	}
 
@@ -263,10 +263,10 @@ static __CUnitTests_Error __CUnitTests_performAction(__CUnitTests_Context *ctx) 
 	return ctx->executionResult;
 }
 
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 	__CUnitTests_Context *ctx = __CUnitTests_createContext(argc, argv);
 	__CUnitTests_Error result = __CUnitTests_performAction(ctx);
-	exit(result);
+	return result;
 }
 
 static void __CUnitTests_setTestSucceed() { __CUnitTests_Global_currentTest->result = __CUnitTests_Error_Succeed; }
