@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(CUnitTests VERSION 1.0.0 LANGUAGES C)
+project(CUnitTests VERSION 1.1 LANGUAGES C)
 
 message("Adding ${PROJECT_NAME} library")
 add_library(CUnitTests INTERFACE)
