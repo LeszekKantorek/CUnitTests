@@ -37,10 +37,10 @@ test_assert_not_equal(expected, result, message, ...);
 test_assert_null(value, message, ...);
 test_assert_not_null(value, message,...);
 ```
-Use following functions to set given test result.
+Use following macros to set given test result:
 ``` c
-test_succeed()	- set test result to Succeed.
-test_failed()	- set test result to Failed. 
+test_succeed(); //set current test result to Succeed.
+test_failed();  //set current test result to Failed. 
 ```
 
 ## CMake installation
