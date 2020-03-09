@@ -1,7 +1,8 @@
 # CUnitTests
 Simple and robust, single header file ANSI C unit testing library.
 
-## Simple test example
+## Defining tests
+Use the `test(TestName, {test code});` macro to add test.
 
 example.c
 ``` c
@@ -19,23 +20,20 @@ program_name                     - list all tests
 ```
 
 ## Tests executable exit codes
-``` c
-__CUnitTests_Error_Succeed = 0,
-__CUnitTests_Error_Error = 1,
-__CUnitTests_Error_Failed = 2,
-__CUnitTests_Error_NotFound = 3,
-__CUnitTests_Error_NotExecuted = 4,
-```
+The test program uses following exit codes:
+* 0 - Success
+* 1 - Test not found, Test not executed, error 
+* 2 - Failure
 
 ## Assertions
 Build-in assertions: 
 ``` c
-test_assert_true(expr, message, ...)				
-test_assert_false(expr, message, ...)				
-test_assert_equal(expected, result, message, ...)	
-test_assert_not_equal(expected, result, message, ...)
-test_assert_null(value, message, ...)
-test_assert_not_null(value, message,...)
+test_assert_true(expr, message, ...);				
+test_assert_false(expr, message, ...);				
+test_assert_equal(expected, result, message, ...);	
+test_assert_not_equal(expected, result, message, ...);
+test_assert_null(value, message, ...);
+test_assert_not_null(value, message,...);
 ```
 Use following functions to set given test result.
 ``` c
@@ -44,7 +42,7 @@ test_failed()	- set test result to Failed.
 ```
 
 ## CMake installation
-The easiest way to get library installed is to use the CMake FetchContent_Declare function.
+The easiest way to get library installed is to use the CMake `FetchContent_Declare` function.
 ``` CMake
 include(FetchContent)
 FetchContent_Declare(CUnitTests
