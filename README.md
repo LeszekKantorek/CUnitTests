@@ -15,7 +15,7 @@ test(First, { printf("From test 1"); });
 program_name -e                  - execute all tests \
 program_name -ie                 - execute all tests in isolation \
 program_name -e first second ... - execute specified tests \
-program_name /i first second ... - execute specified tests in isolation\
+program_name -i first second ... - execute specified tests in isolation\
 program_name                     - list all tests
 ```
 
