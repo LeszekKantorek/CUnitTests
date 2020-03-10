@@ -307,9 +307,15 @@ int main(int argc, char *argv[]) {
 	return result;
 }
 
-static void __CUnitTests_setTestSucceed() { __CUnitTests_Global_currentTest->result = __CUnitTests_Error_Succeed; }
+static void __CUnitTests_setTestSucceed() { 
+	__CUnitTests_printOut("\n\tSetting test result to Succeed.");
+	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Succeed; 
+}
 
-static void __CUnitTests_setTestFailed() { __CUnitTests_Global_currentTest->result = __CUnitTests_Error_Failed; }
+static void __CUnitTests_setTestFailed() { 
+	__CUnitTests_printOut("\n\tSetting test result to Failed.");
+	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Failed; 
+}
 
 static void __CUnitTests_assertionFailed(char *file, int line, char *message, ...) {
 	__CUnitTests_setTestFailed();
