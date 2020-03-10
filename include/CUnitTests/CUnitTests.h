@@ -307,18 +307,18 @@ int main(int argc, char *argv[]) {
 	return result;
 }
 
-static void __CUnitTests_setTestSucceed() { 
-	__CUnitTests_printOut("\n\tSetting test result to Succeed.");
+static void __CUnitTests_setTestSucceed(char *file, int line) { 
+	__CUnitTests_printOut("\n\tSetting test result to Succeed in in %s:%d", file, line);
 	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Succeed; 
 }
 
-static void __CUnitTests_setTestFailed() { 
-	__CUnitTests_printOut("\n\tSetting test result to Failed.");
-	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Failed; 
+static void __CUnitTests_setTestFailed(char *file, int line) { 
+	__CUnitTests_printError("\n\tSetting test result to Failed in %s:%d", file, line);
+	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Failed;
 }
 
 static void __CUnitTests_assertionFailed(char *file, int line, char *message, ...) {
-	__CUnitTests_setTestFailed();
+	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Failed;
 	va_list args;
 	va_start(args, message);
 	fprintf(stderr,"\n\tAssertion failed: '");
@@ -337,8 +337,8 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 		__CUnitTests_Global_tests[id].result = __CUnitTests_Error_NotExecuted;                                         \
 	}
 
-#define test_set_failed() __CUnitTests_setTestFailed()
-#define test_set_succeed() __CUnitTests_setTestSucceed()
+#define test_set_failed() __CUnitTests_setTestFailed(__FILE__, __LINE__)
+#define test_set_succeed() __CUnitTests_setTestSucceed(__FILE__, __LINE__)
 #define test_failed() __CUnitTests_Global_currentTest->result == __CUnitTests_Error_Failed
 
 #define test_assert_true(expr, message, ...)                                                                           \
