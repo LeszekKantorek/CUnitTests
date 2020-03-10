@@ -10,7 +10,7 @@ example.c
 test(First, { printf("From test 1"); });
 ```
 
-## Tests executable usage
+## Tests executable
 ```
 program_name -e                   - execute all tests \
 program_name -ei                  - execute all tests in isolation \
@@ -20,11 +20,13 @@ program_name                      - list all tests
 ```
 The term 'in isolation' means as separate process.
 
-## Tests executable exit codes
+Normal messages are printed to `stdout`.
+Error messages are printed to `stderr`. 
+
 The test program exit codes:
 ```
 0 - Success
-1 - Test not found, Test not executed, error 
+1 - Test not found, Test not executed, Errors
 2 - Failure
 ```
 
