@@ -160,24 +160,26 @@ static void __CUnitTests_printError(const char *format, ...) {
 	va_end(args);
 }
 
-static void __CUnitTests_printOut(const char *format, ...) {
+static void __CUnitTests_printInfo(const char *format, ...) {
 	va_list args;
 	va_start(args, format);
 	vfprintf(stdout, format, args);
 	va_end(args);
 }
 
+#define test_print_info(format, ...) __CUnitTests_printInfo(format, ##__VA_ARGS__)
+#define test_print_error(format, ...) __CUnitTests_printError(format, ##__VA_ARGS__)
 
 static void __CUnitTests_printExecutingMessage(__CUnitTests_Test *test) {
-	__CUnitTests_printOut("\n'%s' started...\t", test->test_name);
+	test_print_info("\n'%s' started...\t", test->test_name);
 }
 
 static void __CUnitTests_printTestResultMessage(__CUnitTests_Test *test) {
 	char *testResultString = __CUnitTests_getTestResultString(test->result);
 	if (test->result == __CUnitTests_Error_Succeed) {
-		__CUnitTests_printOut("\n'%s' %s", test->test_name, testResultString);
+		test_print_info("\n'%s' %s", test->test_name, testResultString);
 	} else {
-		__CUnitTests_printError("\n'%s' %s", test->test_name, testResultString);
+		test_print_error("\n'%s' %s", test->test_name, testResultString);
 	}
 }
 
@@ -234,11 +236,11 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 	}
 
 	if (tests_failed || tests_errored) {
-		__CUnitTests_printError("\n\n%s tests execution failures:", __CUnitTests_getFileNameFromPath(ctx->executableName));
+		test_print_error("\n\n%s tests execution failures:", __CUnitTests_getFileNameFromPath(ctx->executableName));
 		for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 			__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 			if (test->result != __CUnitTests_Error_Succeed) {
-				__CUnitTests_printError("\n%s:\t%s", test->test_name, __CUnitTests_getTestResultString(test->result));
+				test_print_error("\n%s:\t%s", test->test_name, __CUnitTests_getTestResultString(test->result));
 			}
 		}
 	}
@@ -252,10 +254,10 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 	}
 
 	if (ctx->executionResult == __CUnitTests_Error_Succeed) {
-		__CUnitTests_printOut("\n\nTotal: %u. Succeed: %u. Failed: %u. Errors: %u \n", ctx->testsToExecuteCount, tests_succeed,
+		test_print_info("\n\nTotal: %u. Succeed: %u. Failed: %u. Errors: %u \n", ctx->testsToExecuteCount, tests_succeed,
 			   tests_failed, tests_errored);
 	}else{
-		__CUnitTests_printError( "\n\nTotal: %u. Succeed: %u. Failed: %u. Errors: %u \n", ctx->testsToExecuteCount, tests_succeed,
+		test_print_error( "\n\nTotal: %u. Succeed: %u. Failed: %u. Errors: %u \n", ctx->testsToExecuteCount, tests_succeed,
 			   tests_failed, tests_errored);
 	}
 }
@@ -273,16 +275,16 @@ static void __CUnitTests_executeTests(__CUnitTests_Context *ctx) {
 static void __CUnitTests_listTests(__CUnitTests_Context *ctx) {
 	char *executableName = __CUnitTests_getFileNameFromPath(ctx->executableName);
 
-	__CUnitTests_printOut( "\n%s usage:", executableName);
-	__CUnitTests_printOut( "\n%s -e                       - execute all tests", executableName);
-	__CUnitTests_printOut( "\n%s -ei                      - execute all tests in isolation", executableName);
-	__CUnitTests_printOut( "\n%s -e first second ...      - execute selected tests", executableName);
-	__CUnitTests_printOut( "\n%s -ei first second ...     - execute selected tests in isolation", executableName);
-	__CUnitTests_printOut( "\n%s                          - list all tests", executableName);
+	test_print_info( "\n%s usage:", executableName);
+	test_print_info( "\n%s -e                       - execute all tests", executableName);
+	test_print_info( "\n%s -ei                      - execute all tests in isolation", executableName);
+	test_print_info( "\n%s -e first second ...      - execute selected tests", executableName);
+	test_print_info( "\n%s -ei first second ...     - execute selected tests in isolation", executableName);
+	test_print_info( "\n%s                          - list all tests", executableName);
 
-	__CUnitTests_printOut("\nAvailable tests:\n");
+	test_print_info("\nAvailable tests:\n");
 	for (unsigned index = 0; index < __CUnitTests_Global_testsCount; index++) {
-		__CUnitTests_printOut("\n%s", __CUnitTests_Global_tests[index].test_name);
+		test_print_info("\n%s", __CUnitTests_Global_tests[index].test_name);
 	}
 
 	ctx->executionResult = __CUnitTests_Error_Succeed;
@@ -308,12 +310,12 @@ int main(int argc, char *argv[]) {
 }
 
 static void __CUnitTests_setTestSucceed(char *file, int line) { 
-	__CUnitTests_printOut("\n\tSetting test result to Succeed in in %s:%d", file, line);
+	test_print_info("\n\tSetting test result to Succeed in in %s:%d", file, line);
 	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Succeed; 
 }
 
 static void __CUnitTests_setTestFailed(char *file, int line) { 
-	__CUnitTests_printError("\n\tSetting test result to Failed in %s:%d", file, line);
+	test_print_error("\n\tSetting test result to Failed in %s:%d", file, line);
 	__CUnitTests_Global_currentTest->result = __CUnitTests_Error_Failed;
 }
 

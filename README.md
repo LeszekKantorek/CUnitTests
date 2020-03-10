@@ -12,12 +12,13 @@ test(First, { printf("From test 1"); });
 
 ## Tests executable usage
 ```
-program_name -e                  - execute all tests \
-program_name -ie                 - execute all tests in isolation \
-program_name -e first second ... - execute specified tests \
-program_name -i first second ... - execute specified tests in isolation\
-program_name                     - list all tests
+program_name -e                   - execute all tests \
+program_name -ei                  - execute all tests in isolation \
+program_name -e first second ...  - execute specified tests \
+program_name -ei first second ... - execute specified tests in isolation\
+program_name                      - list all tests
 ```
+The term 'in isolation' means as separate process.
 
 ## Tests executable exit codes
 The test program exit codes:
@@ -27,8 +28,8 @@ The test program exit codes:
 2 - Failure
 ```
 
-## Assertions
-Build-in assertions: 
+## API
+Build-in test assertions: 
 ``` c
 test_assert_true(expr, message, ...);				
 test_assert_false(expr, message, ...);				
@@ -37,13 +38,19 @@ test_assert_not_equal(expected, result, message, ...);
 test_assert_null(value, message, ...);
 test_assert_not_null(value, message,...);
 ```
-Use following macros to set given test result:
+Seting given test result from code:
 ``` c
-test_set_succeed(); //set current test result to Succeed.
-test_set_failed();  //set current test result to Failed. 
+test_set_succeed();    // changes current test result to Succeed.
+test_set_failed();     // changes current test result to Failed. 
 ```
-Use `test_failed()` to check if test has failed
+Additional macros:
+``` c
+test_failed();                    // checks if given test has failed.
+test_print_info(format, args);    // prints formatted message into stdout.
+test_print_error(format, args);   // prints formatted error message into stderr.
+```
 
+example.c
 ``` c
 test(check_failure,{
     ...
