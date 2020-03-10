@@ -156,6 +156,7 @@ static __CUnitTests_Context *__CUnitTests_createContext(int argc, char *argv[]) 
 static void __CUnitTests_printError(const char *format, ...) {
 	va_list args;
 	va_start(args, format);
+	fprintf(stderr,"\n\t");
 	vfprintf(stderr, format, args);
 	va_end(args);
 }
@@ -163,6 +164,7 @@ static void __CUnitTests_printError(const char *format, ...) {
 static void __CUnitTests_printInfo(const char *format, ...) {
 	va_list args;
 	va_start(args, format);
+	fprintf(stdout,"\n\t");
 	vfprintf(stdout, format, args);
 	va_end(args);
 }
