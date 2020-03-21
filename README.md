@@ -10,16 +10,20 @@ example.c
 test(First, { printf("From test 1"); });
 ```
 
-## Tests executable
+## Tests executable usage
 ```
 program_name -e                   - execute all tests \
 program_name -ei                  - execute all tests in isolation \
 program_name -e first second ...  - execute specified tests \
 program_name -ei first second ... - execute specified tests in isolation\
 program_name                      - list all tests
+
+Additional flags:
+-c                          - color output
 ```
 The term 'in isolation' means as separate process.
 
+## Tests executable output
 Normal messages are printed to `stdout`.
 Error messages are printed to `stderr`. 
 

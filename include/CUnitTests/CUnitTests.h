@@ -67,6 +67,7 @@ typedef struct __CUnitTests_Context {
 static __CUnitTests_Test __CUnitTests_Global_tests[__CUNIT_TESTS_MAX];
 static unsigned __CUnitTests_Global_testsCount = 0;
 static __CUnitTests_Test *__CUnitTests_Global_currentTest = NULL;
+static unsigned __CUnitTests_Global_outputColors = 0;
 
 static char *__CUnitTests_getFileNameFromPath(char *filePath) {
 	for (size_t i = strlen(filePath) - 1; i; i--) {
@@ -78,23 +79,19 @@ static char *__CUnitTests_getFileNameFromPath(char *filePath) {
 }
 
 static char *__CUnitTests_getTestResultString(__CUnitTests_Error result) {
+
 	switch (result) {
 		case __CUnitTests_Error_Succeed:
-			return "SUCCEED";
+			return __CUnitTests_Global_outputColors ? "\033[0;32mSUCCEED\033[0m" : "SUCCEED";
 		case __CUnitTests_Error_Failed:
-			return "FAILED";
-			break;
+			return __CUnitTests_Global_outputColors ? "\033[0;31mFAILED\033[0m" : "FAILED";
 		case __CUnitTests_Error_NotFound:
-			return "NOT FOUND";
-			break;
+			return __CUnitTests_Global_outputColors ? "\033[0;31mNOT_FOUND\033[0m" : "NOT_FOUND";
 		case __CUnitTests_Error_NotExecuted:
-			return "NOT EXECUTED";
-			break;
+			return __CUnitTests_Global_outputColors ? "\033[0;31mNOT_EXECUTED\033[0m" : "NOT_EXECUTED";
 		default:
-			break;
+			return __CUnitTests_Global_outputColors ? "\033[0;31mERROR\033[0m" : "ERROR";
 	}
-
-	return "ERROR";
 }
 
 static void __CUnitTests_findTests(__CUnitTests_Context *ctx, char **specifiedTestsNames, int specifiedTestsCount) {
@@ -126,10 +123,12 @@ static __CUnitTests_Context *__CUnitTests_createContext(int argc, char *argv[]) 
 	ctx->action = __CUnitTests_Action_List;
 	ctx->executionMode = __CUnitTests_ExecutionMode_InProcess;
 	ctx->executionResult = __CUnitTests_Error_NotExecuted;
-
 	int opt;
-	while ((opt = getopt(argc, argv, "ei")) != -1) {
+	while ((opt = getopt(argc, argv, "eic")) != -1) {
 		switch (opt) {
+			case 'c':
+				__CUnitTests_Global_outputColors = 1;
+				break;
 			case 'e':
 				ctx->action = __CUnitTests_Action_Execute;
 				break;
@@ -153,22 +152,15 @@ static __CUnitTests_Context *__CUnitTests_createContext(int argc, char *argv[]) 
 	return ctx;
 }
 
-static void __CUnitTests_printError(const char *format, ...) {
+static void __CUnitTests_vfprintf(FILE *stream, const char *format, ...) {
 	va_list args;
 	va_start(args, format);
-	vfprintf(stderr, format, args);
+	vfprintf(stream, format, args);
 	va_end(args);
 }
 
-static void __CUnitTests_printInfo(const char *format, ...) {
-	va_list args;
-	va_start(args, format);
-	vfprintf(stdout, format, args);
-	va_end(args);
-}
-
-#define test_print_info(format, ...) __CUnitTests_printInfo(format, ##__VA_ARGS__)
-#define test_print_error(format, ...) __CUnitTests_printError(format, ##__VA_ARGS__)
+#define test_print_info(format, ...) __CUnitTests_vfprintf(stdout, format, ##__VA_ARGS__)
+#define test_print_error(format, ...) __CUnitTests_vfprintf(stderr, format, ##__VA_ARGS__)
 
 static void __CUnitTests_printExecutingMessage(__CUnitTests_Test *test) {
 	test_print_info("\n'%s' started...", test->test_name);
@@ -239,37 +231,35 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 	}
 
 	if (tests_failed || tests_errored) {
-		test_print_error("%s tests execution failures:", __CUnitTests_getFileNameFromPath(ctx->executableName));
+		test_print_error("\n%s tests execution failures:", __CUnitTests_getFileNameFromPath(ctx->executableName));
 		for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 			__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 			if (test->result != __CUnitTests_Error_Succeed) {
-				test_print_error("%s:\t%s", test->test_name, __CUnitTests_getTestResultString(test->result));
+				test_print_error("\n%s:\t%s", test->test_name, __CUnitTests_getTestResultString(test->result));
 			}
 		}
 	}
-
+	FILE *outputStream = NULL;
 	if (tests_errored > 0) {
 		ctx->executionResult = __CUnitTests_Error_Error;
+		outputStream = stderr;
 	} else if (tests_failed > 0) {
 		ctx->executionResult = __CUnitTests_Error_Failed;
+		outputStream = stderr;
 	} else {
 		ctx->executionResult = __CUnitTests_Error_Succeed;
+		outputStream = stdout;
 	}
 
 	char *testsResultString = __CUnitTests_getTestResultString(ctx->executionResult);
 	char *format = "\n'%s' result: %s. Total: %u. Succeed: %u. Failed: %u. Errors: %u";
 
-	if (ctx->executionResult == __CUnitTests_Error_Succeed) {
-		test_print_info(format,ctx->executableName, testsResultString, ctx->testsToExecuteCount, tests_succeed, tests_failed,
-						tests_errored);
-	} else {
-		test_print_error(format,ctx->executableName, ctx->testsToExecuteCount, tests_succeed, tests_failed,
-						 tests_errored);
-	}
+	__CUnitTests_vfprintf(outputStream, format, ctx->executableName, testsResultString, ctx->testsToExecuteCount,
+						  tests_succeed, tests_failed, tests_errored);
 }
 
 static void __CUnitTests_executeTests(__CUnitTests_Context *ctx) {
-	
+
 	if (ctx->executionMode == __CUnitTests_ExecutionMode_InProcess) {
 		__CUnitTests_executeTestsInProcess(ctx);
 	} else {
@@ -281,13 +271,14 @@ static void __CUnitTests_executeTests(__CUnitTests_Context *ctx) {
 static void __CUnitTests_listTests(__CUnitTests_Context *ctx) {
 	char *executableName = __CUnitTests_getFileNameFromPath(ctx->executableName);
 
-	test_print_info("%s usage:\n", executableName);
+	test_print_info("Usage:\n", executableName);
 	test_print_info("%s -e                       - execute all tests\n", executableName);
 	test_print_info("%s -ei                      - execute all tests in isolation\n", executableName);
 	test_print_info("%s -e first second ...      - execute selected tests\n", executableName);
 	test_print_info("%s -ei first second ...     - execute selected tests in isolation\n", executableName);
 	test_print_info("%s                          - list all tests\n", executableName);
-
+	test_print_info("\nAdditional flags:\n");
+	test_print_info("-c                          - color output\n");
 	test_print_info("\nAvailable tests:\n");
 	for (unsigned index = 0; index < __CUnitTests_Global_testsCount; index++) {
 		test_print_info("%s\n", __CUnitTests_Global_tests[index].test_name);
