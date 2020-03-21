@@ -340,22 +340,40 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 #define test_set_succeed() __CUnitTests_setTestSucceed(__FILE__, __LINE__)
 #define test_failed() __CUnitTests_Global_currentTest->result == __CUnitTests_Error_Failed
 
-#define test_assert_true(expr, message, ...)                                                                           \
+#define test_assert_true(expr)                                                                           \
+	if (!(expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, #expr)
+
+#define test_assert_true_fmt(expr, message, ...)                                                                           \
 	if (!(expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_false(expr, message, ...)                                                                          \
+#define test_assert_false(expr)                                                                          \
+	if ((expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, #expr)
+
+#define test_assert_false_fmt(expr, message, ...)                                                                          \
 	if ((expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_equal(expected, result, message, ...)                                                              \
+#define test_assert_equal(expected, result)                                                              \
+	if ((expected) != (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s==%s", #expected, #result);
+
+#define test_assert_equal_fmt(expected, result, message, ...)                                                              \
 	if ((expected) != (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__);
 
-#define test_assert_not_equal(expected, result, message, ...)                                                          \
+#define test_assert_not_equal(expected, result )                                                          \
+	if ((expected) == (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s!=%s", #expected, #result)
+
+#define test_assert_not_equal_fmt(expected, result, message, ...)                                                          \
 	if ((expected) == (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_null(value, message, ...)                                                                          \
+#define test_assert_null(value)                                                                          \
+	if ((value) != (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s == NULL", #value)
+
+#define test_assert_null_fmt(value, message, ...)                                                                          \
 	if ((value) != (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_not_null(value, message, ...)                                                                      \
+#define test_assert_not_null(value)                                                                      \
+	if ((value) == (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s != NULL", #value)
+
+#define test_assert_not_null_fmt(value, message, ...)                                                                      \
 	if ((value) == (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
 #endif /* _CUnitTests_CUnitTests_h_ */

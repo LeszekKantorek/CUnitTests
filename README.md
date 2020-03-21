@@ -37,12 +37,23 @@ The test program exit codes:
 ## API
 Build-in test assertions: 
 ``` c
-test_assert_true(expr, message, ...);				
-test_assert_false(expr, message, ...);				
-test_assert_equal(expected, result, message, ...);	
-test_assert_not_equal(expected, result, message, ...);
-test_assert_null(value, message, ...);
-test_assert_not_null(value, message,...);
+test_assert_true(expr);
+test_assert_true_fmt(expr, message, ...);
+
+test_assert_false(expr);								
+test_assert_false_fmt(expr, message, ...);				
+
+test_assert_equal(expected, result);	
+test_assert_equal_fmt(expected, result, message, ...);	
+
+test_assert_not_equal(expected, result);
+test_assert_not_equal_fmt(expected, result, message, ...);
+
+test_assert_null(value, message);
+test_assert_null_fmt(value, message, ...);
+
+test_assert_not_null(value);
+test_assert_not_null_fmt(value, message,...);
 ```
 Seting given test result from code:
 ``` c
