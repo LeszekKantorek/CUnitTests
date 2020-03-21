@@ -48,7 +48,11 @@ typedef struct __CUnitTests_Test {
 	__CUnitTests_Error result;
 } __CUnitTests_Test;
 
-typedef enum __CUnitTests_Action { __CUnitTests_Action_List = 0, __CUnitTests_Action_Execute = 1 } __CUnitTests_Action;
+typedef enum __CUnitTests_Action {
+	__CUnitTests_Action_PrintUsage = 0,
+	__CUnitTests_Action_List = 1,
+	__CUnitTests_Action_Execute = 2
+} __CUnitTests_Action;
 
 typedef enum __CUnitTests_ExecutionMode {
 	__CUnitTests_ExecutionMode_InProcess = 0,
@@ -117,20 +121,26 @@ static void __CUnitTests_findTests(__CUnitTests_Context *ctx, char **specifiedTe
 	ctx->testsToExecuteCount = specifiedTestsCount;
 }
 
+#define __CUnitTests_setContextAction(ctx, newAction)                                                                  \
+	if (ctx->action == __CUnitTests_Action_PrintUsage) ctx->action = newAction
+
 static __CUnitTests_Context *__CUnitTests_createContext(int argc, char *argv[]) {
 	__CUnitTests_Context *ctx = malloc(sizeof(__CUnitTests_Context));
 	ctx->executableName = argv[0];
-	ctx->action = __CUnitTests_Action_List;
+	ctx->action = __CUnitTests_Action_PrintUsage;
 	ctx->executionMode = __CUnitTests_ExecutionMode_InProcess;
 	ctx->executionResult = __CUnitTests_Error_NotExecuted;
 	int opt;
-	while ((opt = getopt(argc, argv, "eic")) != -1) {
+	while ((opt = getopt(argc, argv, "eicl")) != -1) {
 		switch (opt) {
+			case 'l':
+				__CUnitTests_setContextAction(ctx, __CUnitTests_Action_List);
+				break;
 			case 'c':
 				__CUnitTests_Global_outputColors = 1;
 				break;
 			case 'e':
-				ctx->action = __CUnitTests_Action_Execute;
+				__CUnitTests_setContextAction(ctx, __CUnitTests_Action_Execute);
 				break;
 			case 'i':
 				ctx->executionMode = __CUnitTests_ExecutionMode_NewProcess;
@@ -268,32 +278,37 @@ static void __CUnitTests_executeTests(__CUnitTests_Context *ctx) {
 	__CUnitTests_getResults(ctx);
 }
 
-static void __CUnitTests_listTests(__CUnitTests_Context *ctx) {
+static void __CUnitTests_printUsage(__CUnitTests_Context *ctx) {
 	char *executableName = __CUnitTests_getFileNameFromPath(ctx->executableName);
-
 	test_print_info("Usage:\n", executableName);
 	test_print_info("%s -e                       - execute all tests\n", executableName);
-	test_print_info("%s -ei                      - execute all tests in isolation\n", executableName);
+	test_print_info("%s -ei                      - execute all tests as separate processes\n", executableName);
 	test_print_info("%s -e first second ...      - execute selected tests\n", executableName);
-	test_print_info("%s -ei first second ...     - execute selected tests in isolation\n", executableName);
-	test_print_info("%s                          - list all tests\n", executableName);
+	test_print_info("%s -ei first second ...     - execute selected tests as separate processes\n", executableName);
+	test_print_info("%s -l                       - list all tests\n", executableName);
+	test_print_info("%s                          - print usage\n", executableName);
 	test_print_info("\nAdditional flags:\n");
 	test_print_info("-c                          - color output\n");
-	test_print_info("\nAvailable tests:\n");
+	ctx->executionResult = __CUnitTests_Error_Succeed;
+}
+
+static void __CUnitTests_listTests(__CUnitTests_Context *ctx) {
 	for (unsigned index = 0; index < __CUnitTests_Global_testsCount; index++) {
 		test_print_info("%s\n", __CUnitTests_Global_tests[index].test_name);
 	}
-
 	ctx->executionResult = __CUnitTests_Error_Succeed;
 }
 
 static __CUnitTests_Error __CUnitTests_performAction(__CUnitTests_Context *ctx) {
 	switch (ctx->action) {
+		case __CUnitTests_Action_List:
+			__CUnitTests_listTests(ctx);
+			break;
 		case __CUnitTests_Action_Execute:
 			__CUnitTests_executeTests(ctx);
 			break;
 		default:
-			__CUnitTests_listTests(ctx);
+			__CUnitTests_printUsage(ctx);
 			break;
 	}
 
@@ -340,40 +355,40 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 #define test_set_succeed() __CUnitTests_setTestSucceed(__FILE__, __LINE__)
 #define test_failed() __CUnitTests_Global_currentTest->result == __CUnitTests_Error_Failed
 
-#define test_assert_true(expr)                                                                           \
+#define test_assert_true(expr)                                                                                         \
 	if (!(expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, #expr)
 
-#define test_assert_true_fmt(expr, message, ...)                                                                           \
+#define test_assert_true_fmt(expr, message, ...)                                                                       \
 	if (!(expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_false(expr)                                                                          \
+#define test_assert_false(expr)                                                                                        \
 	if ((expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, #expr)
 
-#define test_assert_false_fmt(expr, message, ...)                                                                          \
+#define test_assert_false_fmt(expr, message, ...)                                                                      \
 	if ((expr)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_equal(expected, result)                                                              \
+#define test_assert_equal(expected, result)                                                                            \
 	if ((expected) != (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s==%s", #expected, #result);
 
-#define test_assert_equal_fmt(expected, result, message, ...)                                                              \
+#define test_assert_equal_fmt(expected, result, message, ...)                                                          \
 	if ((expected) != (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__);
 
-#define test_assert_not_equal(expected, result )                                                          \
+#define test_assert_not_equal(expected, result)                                                                        \
 	if ((expected) == (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s!=%s", #expected, #result)
 
-#define test_assert_not_equal_fmt(expected, result, message, ...)                                                          \
+#define test_assert_not_equal_fmt(expected, result, message, ...)                                                      \
 	if ((expected) == (result)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_null(value)                                                                          \
+#define test_assert_null(value)                                                                                        \
 	if ((value) != (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s == NULL", #value)
 
-#define test_assert_null_fmt(value, message, ...)                                                                          \
+#define test_assert_null_fmt(value, message, ...)                                                                      \
 	if ((value) != (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
-#define test_assert_not_null(value)                                                                      \
+#define test_assert_not_null(value)                                                                                    \
 	if ((value) == (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, "%s != NULL", #value)
 
-#define test_assert_not_null_fmt(value, message, ...)                                                                      \
+#define test_assert_not_null_fmt(value, message, ...)                                                                  \
 	if ((value) == (NULL)) __CUnitTests_assertionFailed(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
 #endif /* _CUnitTests_CUnitTests_h_ */

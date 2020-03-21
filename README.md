@@ -7,16 +7,19 @@ Use the `test(TestName, {test code});` macro to add test.
 example.c
 ``` c
 #include "CUnitTests/CUnitTests.h"
-test(First, { printf("From test 1"); });
+test(First, { 
+  printf("From test 1"); }
+);
 ```
 
 ## Tests executable usage
 ```
-program_name -e                   - execute all tests \
-program_name -ei                  - execute all tests in isolation \
-program_name -e first second ...  - execute specified tests \
-program_name -ei first second ... - execute specified tests in isolation\
-program_name                      - list all tests
+test_executable -e                       - execute all tests
+test_executable -ei                      - execute all tests as separate processes
+test_executable -e first second ...      - execute selected tests
+test_executable -ei first second ...     - execute selected tests as separate processes
+test_executable -l                       - list all tests
+test_executable                          - print usage
 
 Additional flags:
 -c                          - color output
@@ -57,8 +60,8 @@ test_assert_not_null_fmt(value, message,...);
 ```
 Seting given test result from code:
 ``` c
-test_set_succeed();    // changes current test result to Succeed.
-test_set_failed();     // changes current test result to Failed. 
+test_set_succeed();    // changes current test result to SUCCEED.
+test_set_failed();     // changes current test result to FAILED. 
 ```
 Additional macros:
 ``` c
