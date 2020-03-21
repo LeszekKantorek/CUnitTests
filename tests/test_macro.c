@@ -23,8 +23,12 @@ SOFTWARE.
 */
 
 #include "CUnitTests/CUnitTests.h"
-#include "asserts.c"
-#include "test_macro.c"
 
-test(First, { printf("From test 1"); })
-test(Second, { printf("From test 2"); })
+test(CheckCompiler, {
+    printf("Double \"quotes\"");
+
+    char singleQuotes[2]={'a', 'b'};
+    for(int i =0; i<2;i++){
+        printf("%c",singleQuotes[i]);
+    };
+})
