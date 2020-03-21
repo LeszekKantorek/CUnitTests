@@ -1,8 +1,8 @@
 # CUnitTests
 Simple and robust, single header file ANSI C unit testing library.
 
-## Defining tests
-Use the `test(TestName, {test code});` macro to add test.
+## Usage
+Include the `CUnitTests.h` library and add new test using the `test(TestName, {test code});` macro.
 
 example.c
 ``` c
@@ -23,8 +23,8 @@ test_executable                          - print usage
 
 Additional flags:
 -c                          - color output
+-q                          - quiet mode (no tests summaries)
 ```
-The term 'in isolation' means as separate process.
 
 ## Tests executable output
 Normal messages are printed to `stdout`.
@@ -58,13 +58,11 @@ test_assert_null_fmt(value, message, ...);
 test_assert_not_null(value);
 test_assert_not_null_fmt(value, message,...);
 ```
-Seting given test result from code:
-``` c
-test_set_succeed();    // changes current test result to SUCCEED.
-test_set_failed();     // changes current test result to FAILED. 
-```
+
 Additional macros:
 ``` c
+test_set_succeed();               // changes current test result to SUCCEED.
+test_set_failed();                // changes current test result to FAILED. 
 test_failed();                    // checks if given test has failed.
 test_print_info(format, args);    // prints formatted message into stdout.
 test_print_error(format, args);   // prints formatted error message into stderr.
@@ -73,12 +71,12 @@ test_print_error(format, args);   // prints formatted error message into stderr.
 example.c
 ``` c
 test(check_failure,{
+    unsigned result = 0;
     ...
-    test_assert_true(0, "Should be true");
+    test_assert_true(result);
     if(test_failed()){
         return;
     }
-    ...
 });
 ```
 
