@@ -239,16 +239,13 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 			}
 		}
 	}
-	FILE *outputStream = NULL;
+	
 	if (tests_errored > 0) {
 		ctx->executionResult = __CUnitTests_Error_Error;
-		outputStream = stderr;
 	} else if (tests_failed > 0) {
 		ctx->executionResult = __CUnitTests_Error_Failed;
-		outputStream = stderr;
 	} else {
 		ctx->executionResult = __CUnitTests_Error_Succeed;
-		outputStream = stdout;
 	}
 
 	char *testsResultString = __CUnitTests_getTestResultString(ctx->executionResult);
