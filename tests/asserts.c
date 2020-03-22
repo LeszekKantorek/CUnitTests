@@ -39,7 +39,7 @@ test(test_assert_true_success,{
 
 test(test_assert_true_success_2,{
     int first = 1;
-    int second = 2;
+    int second = 1;
     test_assert_true(first==second);
     error_should_be(__CUnitTests_Error_Succeed);
 })

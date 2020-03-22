@@ -5,6 +5,9 @@ if(CUNITTESTS_FLAGS)
     message("Adding ${PROJECT_NAME} flags")
     string(APPEND CMAKE_C_FLAGS " -Werror -Wall -Wpedantic -Wextra")
     string(APPEND CMAKE_CXX_FLAGS " -Werror -Wall -Wpedantic -Wextra")
+
+    string(APPEND CMAKE_C_FLAGS " -Wno-gnu-zero-variadic-macro-arguments")
+    string(APPEND CMAKE_CXX_FLAGS " -Wno-gnu-zero-variadic-macro-arguments")
 endif()
 
 message("Adding ${PROJECT_NAME} library")

@@ -350,7 +350,7 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 	va_start(args, message);
 	fprintf(stderr, "\n\tAssertion failed: '");
 	vfprintf(stderr, message, args);
-	fprintf(stderr, "' in %s:%d", file, line);
+	fprintf(stderr, "' in %s:%d\n", file, line);
 	va_end(args);
 }
 
