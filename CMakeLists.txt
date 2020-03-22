@@ -8,6 +8,9 @@ if(CUNITTESTS_FLAGS)
 
     string(APPEND CMAKE_C_FLAGS " -Wno-gnu-zero-variadic-macro-arguments")
     string(APPEND CMAKE_CXX_FLAGS " -Wno-gnu-zero-variadic-macro-arguments")
+
+    string(APPEND CMAKE_C_FLAGS " -Wno-extra-semi")
+    string(APPEND CMAKE_CXX_FLAGS " -Wno-extra-semi")
 endif()
 
 message("Adding ${PROJECT_NAME} library")

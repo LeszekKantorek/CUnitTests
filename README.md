@@ -26,10 +26,7 @@ Additional flags:
 -q                          - quiet mode (no tests summaries)
 ```
 
-## Tests executable output
-Normal messages are printed to `stdout`.
-Error messages are printed to `stderr`. 
-
+## Tests executable exit codes
 The test program exit codes:
 ```
 0 - Success
@@ -64,8 +61,6 @@ Additional macros:
 test_set_succeed();               // changes current test result to SUCCEED.
 test_set_failed();                // changes current test result to FAILED. 
 test_failed();                    // checks if given test has failed.
-test_print_info(format, args);    // prints formatted message into stdout.
-test_print_error(format, args);   // prints formatted error message into stderr.
 ```
 
 example.c
