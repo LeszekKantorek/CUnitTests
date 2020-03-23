@@ -89,7 +89,7 @@ The easiest way to get library installed is to use the CMake `FetchContent_Decla
 include(FetchContent)
 FetchContent_Declare(CUnitTests
   GIT_REPOSITORY https://github.com/LeszekKantorek/CUnitTests.git
-  GIT_TAG v1.1  # use tags for version or master for the latest version 
+  GIT_TAG master  # master for the latest or tags for the given version
 )
 FetchContent_MakeAvailable(CUnitTests)
 
