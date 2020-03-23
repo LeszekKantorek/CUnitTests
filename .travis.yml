@@ -10,12 +10,6 @@ compiler:
 - gcc
 - clang
 
-install:
-- echo ${CC}
-- echo ${CXX}
-- ${CXX} --version
-- cmake --version
-
 before_script:
 - mkdir build
 - cd build
