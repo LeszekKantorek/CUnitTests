@@ -76,9 +76,7 @@ static unsigned __CUnitTests_Global_quiet = 0;
 
 static char *__CUnitTests_getFileNameFromPath(char *filePath) {
 	for (size_t i = strlen(filePath) - 1; i; i--) {
-		if (filePath[i] == '/' || filePath[i] == '\\') {
-			return &filePath[i + 1];
-		}
+		if (filePath[i] == '/' || filePath[i] == '\\') { return &filePath[i + 1]; }
 	}
 	return filePath;
 }
@@ -88,14 +86,12 @@ static char *__CUnitTests_getTestResultString(__CUnitTests_Error result) {
 	switch (result) {
 		case __CUnitTests_Error_Succeed:
 			return __CUnitTests_Global_outputColors ? "\033[0;32mSUCCEED\033[0m" : "SUCCEED";
-		case __CUnitTests_Error_Failed:
-			return __CUnitTests_Global_outputColors ? "\033[0;31mFAILED\033[0m" : "FAILED";
+		case __CUnitTests_Error_Failed: return __CUnitTests_Global_outputColors ? "\033[0;31mFAILED\033[0m" : "FAILED";
 		case __CUnitTests_Error_NotFound:
 			return __CUnitTests_Global_outputColors ? "\033[0;31mNOT_FOUND\033[0m" : "NOT_FOUND";
 		case __CUnitTests_Error_NotExecuted:
 			return __CUnitTests_Global_outputColors ? "\033[0;31mNOT_EXECUTED\033[0m" : "NOT_EXECUTED";
-		default:
-			return __CUnitTests_Global_outputColors ? "\033[0;31mERROR\033[0m" : "ERROR";
+		default: return __CUnitTests_Global_outputColors ? "\033[0;31mERROR\033[0m" : "ERROR";
 	}
 }
 
@@ -136,23 +132,12 @@ static __CUnitTests_Context *__CUnitTests_createContext(int argc, char *argv[]) 
 	int opt;
 	while ((opt = getopt(argc, argv, "eiclq")) != -1) {
 		switch (opt) {
-			case 'l':
-				__CUnitTests_setContextAction(ctx, __CUnitTests_Action_List);
-				break;
-			case 'c':
-				__CUnitTests_Global_outputColors = 1;
-				break;
-			case 'e':
-				__CUnitTests_setContextAction(ctx, __CUnitTests_Action_Execute);
-				break;
-			case 'i':
-				ctx->executionMode = __CUnitTests_ExecutionMode_NewProcess;
-				break;
-			case 'q':
-				__CUnitTests_Global_quiet = 1;
-				break;
-			default:
-				break;
+			case 'l': __CUnitTests_setContextAction(ctx, __CUnitTests_Action_List); break;
+			case 'c': __CUnitTests_Global_outputColors = 1; break;
+			case 'e': __CUnitTests_setContextAction(ctx, __CUnitTests_Action_Execute); break;
+			case 'i': ctx->executionMode = __CUnitTests_ExecutionMode_NewProcess; break;
+			case 'q': __CUnitTests_Global_quiet = 1; break;
+			default: break;
 		}
 	}
 
@@ -178,7 +163,7 @@ static void __CUnitTests_printTestResultMessage(__CUnitTests_Test *test) {
 
 static void __CUnitTests_executeTestsInProcess(__CUnitTests_Context *ctx) {
 	printf("Executing '%s' tests in process", ctx->executableName);
-	for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
+	for (unsigned int testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 		__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 		if (test->result == __CUnitTests_Error_NotExecuted) {
 			test->result = __CUnitTests_Error_Succeed;
@@ -218,15 +203,9 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 	for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 		__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 		switch (test->result) {
-			case __CUnitTests_Error_Succeed:
-				tests_succeed++;
-				break;
-			case __CUnitTests_Error_Failed:
-				tests_failed++;
-				break;
-			default:
-				tests_errored++;
-				break;
+			case __CUnitTests_Error_Succeed: tests_succeed++; break;
+			case __CUnitTests_Error_Failed: tests_failed++; break;
+			default: tests_errored++; break;
 		}
 	}
 
@@ -239,7 +218,7 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 			}
 		}
 	}
-	
+
 	if (tests_errored > 0) {
 		ctx->executionResult = __CUnitTests_Error_Error;
 	} else if (tests_failed > 0) {
@@ -249,8 +228,8 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 	}
 
 	char *testsResultString = __CUnitTests_getTestResultString(ctx->executionResult);
-	printf("\n'%s' result: %s. Total: %u. Succeed: %u. Failed: %u. Errors: %u", ctx->executableName, testsResultString,
-		   ctx->testsToExecuteCount, tests_succeed, tests_failed, tests_errored);
+	printf("\n'%s' result: %s. Total: %u. Succeed: %u. Failed: %u. Errors: %u\n", ctx->executableName,
+		   testsResultString, ctx->testsToExecuteCount, tests_succeed, tests_failed, tests_errored);
 }
 
 static void __CUnitTests_executeTests(__CUnitTests_Context *ctx) {
@@ -286,15 +265,9 @@ static void __CUnitTests_listTests(__CUnitTests_Context *ctx) {
 
 static __CUnitTests_Error __CUnitTests_performAction(__CUnitTests_Context *ctx) {
 	switch (ctx->action) {
-		case __CUnitTests_Action_List:
-			__CUnitTests_listTests(ctx);
-			break;
-		case __CUnitTests_Action_Execute:
-			__CUnitTests_executeTests(ctx);
-			break;
-		default:
-			__CUnitTests_printUsage(ctx);
-			break;
+		case __CUnitTests_Action_List: __CUnitTests_listTests(ctx); break;
+		case __CUnitTests_Action_Execute: __CUnitTests_executeTests(ctx); break;
+		default: __CUnitTests_printUsage(ctx); break;
 	}
 
 	return ctx->executionResult;

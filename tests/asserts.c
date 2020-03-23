@@ -94,16 +94,15 @@ test(test_assert_false_fmt_success, {
 	error_should_be(__CUnitTests_Error_Succeed);
 });
 
-test(test_assert_false_failure,
-	 {
-		 test_assert_false(1);
-		 error_should_be(__CUnitTests_Error_Failed);
-	 })
+test(test_assert_false_failure, {
+	test_assert_false(1);
+	error_should_be(__CUnitTests_Error_Failed);
+});
 
-	test(test_assert_false_fmt_failure, {
-		test_assert_false_fmt(1, "Should be false");
-		error_should_be(__CUnitTests_Error_Failed);
-	});
+test(test_assert_false_fmt_failure, {
+	test_assert_false_fmt(1, "Should be false");
+	error_should_be(__CUnitTests_Error_Failed);
+});
 
 test(test_assert_equal_success, {
 	int first = 1;
