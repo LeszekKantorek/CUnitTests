@@ -1,3 +1,6 @@
+Master: [![Build Status](https://travis-ci.org/LeszekKantorek/CUnitTests.svg?branch=master)](https://travis-ci.org/LeszekKantorek/CUnitTests)
+Develop: [![Build Status](https://travis-ci.org/LeszekKantorek/CUnitTests.svg?branch=develop)](https://travis-ci.org/LeszekKantorek/CUnitTests)
+
 # CUnitTests
 Simple and robust, single header file ANSI C unit testing library.
 
