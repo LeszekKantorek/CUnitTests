@@ -1,0 +1,15 @@
+language: cpp
+dist: bionic
+os:
+- linux
+
+compiler:
+  - gcc
+  
+before_script:
+  - mkdir build
+  - cd build
+  - cmake -DCUNITTESTS_FLAGS=ON -DCUNITTESTS_TESTING=ON ..
+
+script:
+  - make && make test
