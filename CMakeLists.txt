@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.11)
 project(CUnitTests VERSION 1.1 LANGUAGES C)
 
 if(CUNITTESTS_FLAGS)

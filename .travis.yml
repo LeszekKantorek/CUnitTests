@@ -1,16 +1,25 @@
-language: cpp
+language: c
 dist: bionic
+osx_image: xcode11.3
+
 os:
 - linux
+- osx 
 
 compiler:
-  - gcc
-  - clang
-  
+- gcc
+- clang
+
+install:
+- echo ${CC}
+- echo ${CXX}
+- ${CXX} --version
+- cmake --version
+
 before_script:
-  - mkdir build
-  - cd build
-  - cmake -DCUNITTESTS_FLAGS=ON -DCUNITTESTS_TESTING=ON ..
+- mkdir build
+- cd build
+- cmake -DCUNITTESTS_FLAGS=ON -DCUNITTESTS_TESTING=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 
 script:
-  - make && make test
+- make && make test
