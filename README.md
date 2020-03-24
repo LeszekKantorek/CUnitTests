@@ -1,10 +1,5 @@
-Master:
-
-[![Build Status](https://travis-ci.com/LeszekKantorek/CUnitTests.svg?branch=master)](https://travis-ci.com/LeszekKantorek/CUnitTests)
-
-Develop: 
-
 [![Build Status](https://travis-ci.com/LeszekKantorek/CUnitTests.svg?branch=develop)](https://travis-ci.com/LeszekKantorek/CUnitTests)
+[![CodeFactor](https://www.codefactor.io/repository/github/leszekkantorek/cunittests/badge)](https://www.codefactor.io/repository/github/leszekkantorek/cunittests)
 
 # CUnitTests
 Simple and robust, single header file ANSI C unit testing library.

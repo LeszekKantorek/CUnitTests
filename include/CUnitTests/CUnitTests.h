@@ -82,7 +82,6 @@ static char *__CUnitTests_getFileNameFromPath(char *filePath) {
 }
 
 static char *__CUnitTests_getTestResultString(__CUnitTests_Error result) {
-
 	switch (result) {
 		case __CUnitTests_Error_Succeed:
 			return __CUnitTests_Global_outputColors ? "\033[0;32mSUCCEED\033[0m" : "SUCCEED";
