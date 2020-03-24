@@ -24,7 +24,6 @@ SOFTWARE.
 
 #include "CUnitTests/CUnitTests.h"
 
-
 test(CheckCompiler, {
 	printf("Double \"quotes\"");
 	char singleQuotes[2] = {'a', 'b'};
