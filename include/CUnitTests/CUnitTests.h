@@ -32,7 +32,7 @@ SOFTWARE.
 #include <unistd.h>
 
 #define __CUNIT_TESTS_MAX 1024
-#define __CUNIT_TESTS_RUN_COMMAND_PATTERN "%s -eq %s >nul"
+#define __CUNIT_TESTS_RUN_COMMAND_PATTERN "%s -eq %s"
 
 typedef enum __CUnitTests_Error {
 	__CUnitTests_Error_Succeed = 0,
@@ -73,6 +73,15 @@ static unsigned __CUnitTests_Global_testsCount = 0;
 static __CUnitTests_Test *__CUnitTests_Global_currentTest = NULL;
 static unsigned __CUnitTests_Global_outputColors = 0;
 static unsigned __CUnitTests_Global_quiet = 0;
+
+static void __CUnitTests_printfQuiet(char *format, ...) {
+	if (__CUnitTests_Global_quiet == 0) {
+		va_list args;
+		va_start(args, format);
+		vprintf(format, args);
+		va_end(args);
+	}
+}
 
 static char *__CUnitTests_getFileNameFromPath(char *filePath) {
 	for (size_t i = strlen(filePath) - 1; i; i--) {
@@ -152,16 +161,17 @@ static __CUnitTests_Context *__CUnitTests_createContext(int argc, char *argv[]) 
 }
 
 static void __CUnitTests_printExecutingMessage(__CUnitTests_Test *test) {
-	printf("\n'%s' started...", test->test_name);
+	__CUnitTests_printfQuiet("\n'%s' started...", test->test_name);
 }
 
 static void __CUnitTests_printTestResultMessage(__CUnitTests_Test *test) {
 	char *testResultString = __CUnitTests_getTestResultString(test->result);
-	printf("\n'%s' %s", test->test_name, testResultString);
+	__CUnitTests_printfQuiet("\n'%s' %s", test->test_name, testResultString);
 }
 
 static void __CUnitTests_executeTestsInProcess(__CUnitTests_Context *ctx) {
-	printf("Executing '%s' tests in process", ctx->executableName);
+	__CUnitTests_printfQuiet("Executing '%s' tests in process", ctx->executableName);
+
 	for (unsigned int testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 		__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 		if (test->result == __CUnitTests_Error_NotExecuted) {
@@ -174,8 +184,19 @@ static void __CUnitTests_executeTestsInProcess(__CUnitTests_Context *ctx) {
 	}
 }
 
+static __CUnitTests_Error __CUnitTests_getSeparateProcessResult(int closeResult) {
+	switch (closeResult) {
+		case 0: return __CUnitTests_Error_Succeed;
+		case 2: return __CUnitTests_Error_Failed;
+		case 3: return __CUnitTests_Error_NotFound;
+		case 4: return __CUnitTests_Error_NotExecuted;
+		default: return __CUnitTests_Error_Error;
+	}
+}
+
 static void __CUnitTests_executeTestsAsSeparateProcess(__CUnitTests_Context *ctx) {
-	printf("Executing '%s' tests as separate processes", ctx->executableName);
+	__CUnitTests_printfQuiet("Executing '%s' tests as separate processes", ctx->executableName);
+
 	for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 		__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
 		if (test->result == __CUnitTests_Error_NotExecuted) {
@@ -187,7 +208,13 @@ static void __CUnitTests_executeTestsAsSeparateProcess(__CUnitTests_Context *ctx
 			snprintf(test_command, test_command_size, __CUNIT_TESTS_RUN_COMMAND_PATTERN, ctx->executableName,
 					 test->test_name);
 			__CUnitTests_printExecutingMessage(test);
-			test->result = system(test_command);
+			test->result = __CUnitTests_Error_Error;
+			FILE *testProcess = popen(test_command, "r");
+			if (testProcess != NULL) {
+				char output[1000];
+				while (fgets(output, sizeof(output), testProcess) != NULL) { printf("%s", output); }
+				test->result = __CUnitTests_getSeparateProcessResult(pclose(testProcess));
+			}
 			free(test_command);
 			__CUnitTests_printTestResultMessage(test);
 		}
@@ -208,7 +235,7 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 		}
 	}
 
-	if (tests_failed || tests_errored) {
+	if (__CUnitTests_Global_quiet == 0 && (tests_failed || tests_errored)) {
 		printf("\n%s tests execution failures:", __CUnitTests_getFileNameFromPath(ctx->executableName));
 		for (unsigned testIndex = 0; testIndex < ctx->testsToExecuteCount; testIndex++) {
 			__CUnitTests_Test *test = &ctx->testsToExecute[testIndex];
@@ -226,9 +253,11 @@ static void __CUnitTests_getResults(__CUnitTests_Context *ctx) {
 		ctx->executionResult = __CUnitTests_Error_Succeed;
 	}
 
-	char *testsResultString = __CUnitTests_getTestResultString(ctx->executionResult);
-	printf("\n'%s' result: %s. Total: %u. Succeed: %u. Failed: %u. Errors: %u\n", ctx->executableName,
-		   testsResultString, ctx->testsToExecuteCount, tests_succeed, tests_failed, tests_errored);
+	if (__CUnitTests_Global_quiet == 0) {
+		char *testsResultString = __CUnitTests_getTestResultString(ctx->executionResult);
+		printf("\n'%s' result: %s. Total: %u. Succeed: %u. Failed: %u. Errors: %u\n", ctx->executableName,
+			   testsResultString, ctx->testsToExecuteCount, tests_succeed, tests_failed, tests_errored);
+	}
 }
 
 static void __CUnitTests_executeTests(__CUnitTests_Context *ctx) {
