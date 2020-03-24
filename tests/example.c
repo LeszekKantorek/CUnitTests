@@ -26,7 +26,5 @@ SOFTWARE.
 #include "asserts.c"
 #include "test_macro.c"
 
-
-
 test(First, { printf("From test 1"); });
 test(Second, { printf("From test 2"); });
