@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(CUnitTests VERSION 1.13 LANGUAGES C)
+project(CUnitTests VERSION 1.3 LANGUAGES C)
 
 if(CUNITTESTS_FLAGS)
 	string(APPEND CMAKE_C_FLAGS " -Werror -Wall -Wextra ")
