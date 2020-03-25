@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/LeszekKantorek/CUnitTests.svg?branch=develop)](https://travis-ci.com/LeszekKantorek/CUnitTests)
+[![CodeFactor](https://www.codefactor.io/repository/github/leszekkantorek/cunittests/badge)](https://www.codefactor.io/repository/github/leszekkantorek/cunittests)
+
 # CUnitTests
 Simple and robust, single header file ANSI C unit testing library.
 
@@ -26,10 +29,7 @@ Additional flags:
 -q                          - quiet mode (no tests summaries)
 ```
 
-## Tests executable output
-Normal messages are printed to `stdout`.
-Error messages are printed to `stderr`. 
-
+## Tests executable exit codes
 The test program exit codes:
 ```
 0 - Success
@@ -64,8 +64,6 @@ Additional macros:
 test_set_succeed();               // changes current test result to SUCCEED.
 test_set_failed();                // changes current test result to FAILED. 
 test_failed();                    // checks if given test has failed.
-test_print_info(format, args);    // prints formatted message into stdout.
-test_print_error(format, args);   // prints formatted error message into stderr.
 ```
 
 example.c
@@ -86,7 +84,7 @@ The easiest way to get library installed is to use the CMake `FetchContent_Decla
 include(FetchContent)
 FetchContent_Declare(CUnitTests
   GIT_REPOSITORY https://github.com/LeszekKantorek/CUnitTests.git
-  GIT_TAG v1.1  # use tags for version or master for the latest version 
+  GIT_TAG master  # master for the latest or tags for the given version
 )
 FetchContent_MakeAvailable(CUnitTests)
 

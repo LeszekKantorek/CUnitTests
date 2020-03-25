@@ -1,0 +1,25 @@
+branches:
+  only:
+  - master
+  - develop
+
+language: c
+
+dist: bionic
+osx_image: xcode11.3
+
+os:
+- linux
+- osx
+
+compiler:
+- gcc
+- clang
+
+before_script:
+- mkdir build
+- cd build
+- cmake -DCUNITTESTS_FLAGS=ON -DCUNITTESTS_TESTING=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+
+script:
+- make && make test

@@ -25,10 +25,7 @@ SOFTWARE.
 #include "CUnitTests/CUnitTests.h"
 
 test(CheckCompiler, {
-    printf("Double \"quotes\"");
-
-    char singleQuotes[2]={'a', 'b'};
-    for(int i =0; i<2;i++){
-        printf("%c",singleQuotes[i]);
-    };
-})
+	printf("Double \"quotes\"");
+	char singleQuotes[2] = {'a', 'b'};
+	for (int i = 0; i < 2; i++) { printf("%c", singleQuotes[i]); };
+});
