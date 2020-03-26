@@ -85,7 +85,9 @@ static void __CUnitTests_printfQuiet(char *format, ...) {
 
 static char *__CUnitTests_getFileNameFromPath(char *filePath) {
 	for (size_t i = strlen(filePath) - 1; i; i--) {
-		if (filePath[i] == '/' || filePath[i] == '\\') { return &filePath[i + 1]; }
+		if (filePath[i] == '/' || filePath[i] == '\\') {
+			return &filePath[i + 1];
+		}
 	}
 	return filePath;
 }
@@ -103,9 +105,9 @@ static char *__CUnitTests_getTestResultString(__CUnitTests_Error result) {
 	}
 }
 
-static void __CUnitTests_findTests(__CUnitTests_Context *ctx, char **specifiedTestsNames, int specifiedTestsCount) {
+static void __CUnitTests_findTests(__CUnitTests_Context *ctx, char **specifiedTestsNames, unsigned specifiedTestsCount) {
 	__CUnitTests_Test *specifiedTests = malloc(specifiedTestsCount * sizeof(__CUnitTests_Test));
-	for (int specifiedIndex = 0; specifiedIndex < specifiedTestsCount; specifiedIndex++) {
+	for (unsigned specifiedIndex = 0; specifiedIndex < specifiedTestsCount; specifiedIndex++) {
 		char *searchedTestName = specifiedTestsNames[specifiedIndex];
 		__CUnitTests_Test *searchedTest = NULL;
 		for (unsigned testIndex = 0; testIndex < __CUnitTests_Global_testsCount; testIndex++) {
@@ -212,7 +214,9 @@ static void __CUnitTests_executeTestsAsSeparateProcess(__CUnitTests_Context *ctx
 			FILE *testProcess = popen(test_command, "r");
 			if (testProcess != NULL) {
 				char output[1000];
-				while (fgets(output, sizeof(output), testProcess) != NULL) { printf("%s", output); }
+				while (fgets(output, sizeof(output), testProcess) != NULL) {
+					printf("%s", output);
+				}
 				test->result = __CUnitTests_getSeparateProcessResult(pclose(testProcess));
 			}
 			free(test_command);
@@ -327,15 +331,16 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 	va_end(args);
 }
 
-#define test(name, ...)                                                                                                \
-	void ___CUnitTests_test_routine_##name() { __VA_ARGS__ }                                                           \
+#define test(name)                                                                                                     \
+	void ___CUnitTests_test_routine_##name();                                                                          \
 	__attribute__((constructor)) void ___CUnitTests_register_test_##name() {                                           \
 		int id = __COUNTER__;                                                                                          \
 		__CUnitTests_Global_testsCount++;                                                                              \
 		__CUnitTests_Global_tests[id].test_name = #name;                                                               \
 		__CUnitTests_Global_tests[id].test_routine = &___CUnitTests_test_routine_##name;                               \
 		__CUnitTests_Global_tests[id].result = __CUnitTests_Error_NotExecuted;                                         \
-	}
+	}                                                                                                                  \
+	void ___CUnitTests_test_routine_##name()
 
 #define test_set_failed() __CUnitTests_setTestFailed(__FILE__, __LINE__)
 #define test_set_succeed() __CUnitTests_setTestSucceed(__FILE__, __LINE__)

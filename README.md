@@ -5,14 +5,15 @@
 Simple and robust, single header file ANSI C unit testing library.
 
 ## Usage
-Include the `CUnitTests.h` library and add new test using the `test(TestName, {test code});` macro.
+Include the `CUnitTests.h` library and use the `test(TestName)` macro to define new test.
 
 example.c
 ``` c
 #include "CUnitTests/CUnitTests.h"
-test(First, { 
-  printf("From test 1"); }
-);
+
+test(MyTestName) { 
+  printf("Hello World!"); 
+}
 ```
 
 ## Tests executable usage
@@ -68,14 +69,14 @@ test_failed();                    // checks if given test has failed.
 
 example.c
 ``` c
-test(check_failure,{
+test(check_failure) {
     unsigned result = 0;
     ...
     test_assert_true(result);
     if(test_failed()){
         return;
     }
-});
+}
 ```
 
 ## CMake installation
