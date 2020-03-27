@@ -69,7 +69,6 @@ typedef struct __CUnitTests_Context {
 	__CUnitTests_Error executionResult;
 	__CUnitTests_Test **testsToExecute;
 	unsigned testsToExecuteCount;
-
 } __CUnitTests_Context;
 
 static __CUnitTests_Test *__CUnitTests_Global_tests[__CUNIT_TESTS_MAX];
@@ -163,7 +162,7 @@ static unsigned __CUnitTests_FilterTestsByTestName(__CUnitTests_Context *ctx, ch
 				found++;
 				break;
 			}
-		} 
+		}
 
 		if (!found) {
 			printf("\nTest '%s' not found.", name);
@@ -378,13 +377,11 @@ static void __CUnitTests_listTests(__CUnitTests_Context *ctx) {
 }
 
 static __CUnitTests_Error __CUnitTests_performAction(__CUnitTests_Context *ctx) {
-	
-		switch (ctx->action) {
-			case __CUnitTests_Action_List: __CUnitTests_listTests(ctx); break;
-			case __CUnitTests_Action_Execute: __CUnitTests_executeTests(ctx); break;
-			default: __CUnitTests_printUsage(ctx); break;
-		}
-	
+	switch (ctx->action) {
+		case __CUnitTests_Action_List: __CUnitTests_listTests(ctx); break;
+		case __CUnitTests_Action_Execute: __CUnitTests_executeTests(ctx); break;
+		default: __CUnitTests_printUsage(ctx); break;
+	}
 	return ctx->executionResult;
 }
 
