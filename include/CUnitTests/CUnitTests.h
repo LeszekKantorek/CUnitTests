@@ -44,7 +44,9 @@ typedef enum __CUnitTests_Error {
 
 typedef struct __CUnitTests_Test {
 	char *test_name;
+	void (*setup)();
 	void (*test_routine)();
+	void (*cleanup)();
 	__CUnitTests_Error result;
 } __CUnitTests_Test;
 
@@ -105,7 +107,8 @@ static char *__CUnitTests_getTestResultString(__CUnitTests_Error result) {
 	}
 }
 
-static void __CUnitTests_findTests(__CUnitTests_Context *ctx, char **specifiedTestsNames, unsigned specifiedTestsCount) {
+static void __CUnitTests_findTests(__CUnitTests_Context *ctx, char **specifiedTestsNames,
+								   unsigned specifiedTestsCount) {
 	__CUnitTests_Test *specifiedTests = malloc(specifiedTestsCount * sizeof(__CUnitTests_Test));
 	for (unsigned specifiedIndex = 0; specifiedIndex < specifiedTestsCount; specifiedIndex++) {
 		char *searchedTestName = specifiedTestsNames[specifiedIndex];
@@ -180,7 +183,13 @@ static void __CUnitTests_executeTestsInProcess(__CUnitTests_Context *ctx) {
 			test->result = __CUnitTests_Error_Succeed;
 			__CUnitTests_Global_currentTest = test;
 			__CUnitTests_printExecutingMessage(test);
+			if (test->setup != NULL) {
+				test->setup();
+			}
 			test->test_routine();
+			if (test->cleanup != NULL) {
+				test->cleanup();
+			}
 			__CUnitTests_printTestResultMessage(test);
 		}
 	}
@@ -331,14 +340,16 @@ static void __CUnitTests_assertionFailed(char *file, int line, char *message, ..
 	va_end(args);
 }
 
-#define test(name)                                                                                                     \
+#define test(name, ...)                                                                                                \
 	void ___CUnitTests_test_routine_##name();                                                                          \
+	static __CUnitTests_Test __CUnitTests_Test_##name = {.test_name = #name,                                           \
+														 .test_routine = &___CUnitTests_test_routine_##name,           \
+														 .result = __CUnitTests_Error_NotExecuted,                     \
+														 ##__VA_ARGS__};                                               \
 	__attribute__((constructor)) void ___CUnitTests_register_test_##name() {                                           \
 		int id = __COUNTER__;                                                                                          \
 		__CUnitTests_Global_testsCount++;                                                                              \
-		__CUnitTests_Global_tests[id].test_name = #name;                                                               \
-		__CUnitTests_Global_tests[id].test_routine = &___CUnitTests_test_routine_##name;                               \
-		__CUnitTests_Global_tests[id].result = __CUnitTests_Error_NotExecuted;                                         \
+		__CUnitTests_Global_tests[id] = __CUnitTests_Test_##name;                                                      \
 	}                                                                                                                  \
 	void ___CUnitTests_test_routine_##name()
 

@@ -16,6 +16,20 @@ test(MyTestName) {
 }
 ```
 
+## Test definition macro
+The test definition macro accepts additional parameters listed below: 
+* '.setup' - pointer to function that will be executed before test
+``` c
+static void setup(){ ... }
+test(TestName, .setup=&setup) { ... }
+```
+
+* '.cleanup' - pointer to function that will be executed after test
+``` c
+static void cleanup(){ ... }
+test(TestName, .cleanup=&cleanup) { ... }
+```
+
 ## Tests executable usage
 ```
 test_executable -e                       - execute all tests
