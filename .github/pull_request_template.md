@@ -10,6 +10,6 @@ Changes:
 
 ### Checklist:
 * [ ] The commit messages follows guidelines
-* [ ] Tests for the changes have been added
-* [ ] Docs have been added / updated
+* [ ] Tests have been updated
+* [ ] Docs have been updated
 
