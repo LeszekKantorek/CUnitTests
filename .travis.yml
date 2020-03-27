@@ -17,8 +17,8 @@ compiler:
 - clang
 
 before_script:
-- mkdir build
-- cd build
+- mkdir out
+- cd out
 - cmake -DCUNITTESTS_FLAGS=ON -DCUNITTESTS_TESTING=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 
 script:
