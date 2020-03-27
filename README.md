@@ -32,12 +32,13 @@ test(TestName, .cleanup=&cleanup) { ... }
 
 ## Tests executable usage
 ```
-test_executable -e                       - execute all tests
-test_executable -ei                      - execute all tests as separate processes
-test_executable -e first second ...      - execute selected tests
-test_executable -ei first second ...     - execute selected tests as separate processes
-test_executable -l                       - list all tests
-test_executable                          - print usage
+test_executable -e                      - execute all tests
+test_executable -ei                     - execute all tests as separate processes
+test_executable -e first second         - execute selected tests
+test_executable -ei first second        - execute selected tests as separate processes
+test_executable -e -s first -s second   - execute selected test suites
+test_executable -l                      - list all tests
+test_executable                         - print usage
 
 Additional flags:
 -c                          - color output
