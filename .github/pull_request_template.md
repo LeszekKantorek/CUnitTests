@@ -1,3 +1,10 @@
+---
+name: Pull request
+about: Create a pull request
+title: '#XYZ Copy title'
+
+---
+
 **IMPORTANT: Please do not create a Pull Request without creating an issue first.**
 
 Closes #XXXX
