@@ -23,13 +23,35 @@ SOFTWARE.
 */
 
 #include "CUnitTests/CUnitTests.h"
-#include "asserts.c"
-#include "test_macro.c"
 
-test(First) {
-	printf("From test 1");
+unsigned suite1 = 0; 
+unsigned suite2 = 0;
+unsigned other = 0;
+
+test(suite1_1, .suite = "suite1") {
+	suite1++;
 }
 
-test(Second) {
-	printf("From test 2");
+test(suite1_2, .suite = "suite1") {
+	suite1++;
+}
+
+test(suite2, .suite = "suite2") {
+	suite2++;
+}
+
+static void setup() {}
+
+test(suite2_setup, .suite = "suite2", .setup = &setup) {
+	suite2++;
+}
+
+test(someOtherTest) {
+	other++;
+}
+
+test(verify_suite, .suite = "suite1") {
+	test_assert_true(suite1);
+	test_assert_false(suite2);
+	test_assert_false(other);
 }

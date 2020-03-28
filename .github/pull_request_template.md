@@ -1,18 +1,15 @@
----
-name: Pull request
-about: Create a pull request
-title: '#XYZ Copy title'
-
----
-
 **IMPORTANT: Please do not create a Pull Request without creating an issue first.**
 
-Closes #XXXX
+- Use '#XYZ issue description' as PR title. 
+- Use 'Fixes #XYZ' in your comment to auto-close the issue.
+
+Changes:
+- Fixes #XYZ issue description
+- second change description
+- third change description
 
 ### Checklist:
+* [ ] The commit messages follows guidelines
+* [ ] Tests have been updated
+* [ ] Docs have been updated
 
-* [ ] Core API has changed
-* [ ] Tests API has changed
-* [ ] Documentation have been updated
-* [ ] New tests have been added
-* [ ] Tests have been executed locally

@@ -5,24 +5,40 @@
 Simple and robust, single header file ANSI C unit testing library.
 
 ## Usage
-Include the `CUnitTests.h` library and add new test using the `test(TestName, {test code});` macro.
+Include the `CUnitTests.h` library and use the `test(TestName)` macro to define new test.
 
 example.c
 ``` c
 #include "CUnitTests/CUnitTests.h"
-test(First, { 
-  printf("From test 1"); }
-);
+
+test(MyTestName) { 
+  printf("Hello World!"); 
+}
+```
+
+## Test definition macro
+The test definition macro accepts additional parameters listed below: 
+* '.setup' - pointer to function that will be executed before test
+``` c
+static void setup(){ ... }
+test(TestName, .setup=&setup) { ... }
+```
+
+* '.cleanup' - pointer to function that will be executed after test
+``` c
+static void cleanup(){ ... }
+test(TestName, .cleanup=&cleanup) { ... }
 ```
 
 ## Tests executable usage
 ```
-test_executable -e                       - execute all tests
-test_executable -ei                      - execute all tests as separate processes
-test_executable -e first second ...      - execute selected tests
-test_executable -ei first second ...     - execute selected tests as separate processes
-test_executable -l                       - list all tests
-test_executable                          - print usage
+test_executable -e                      - execute all tests
+test_executable -ei                     - execute all tests as separate processes
+test_executable -e first second         - execute selected tests
+test_executable -ei first second        - execute selected tests as separate processes
+test_executable -e -s first -s second   - execute selected test suites
+test_executable -l                      - list all tests
+test_executable                         - print usage
 
 Additional flags:
 -c                          - color output
@@ -68,14 +84,14 @@ test_failed();                    // checks if given test has failed.
 
 example.c
 ``` c
-test(check_failure,{
+test(check_failure) {
     unsigned result = 0;
     ...
     test_assert_true(result);
     if(test_failed()){
         return;
     }
-});
+}
 ```
 
 ## CMake installation

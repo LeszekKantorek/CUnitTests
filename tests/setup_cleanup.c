@@ -23,13 +23,36 @@ SOFTWARE.
 */
 
 #include "CUnitTests/CUnitTests.h"
-#include "asserts.c"
-#include "test_macro.c"
 
-test(First) {
-	printf("From test 1");
+static unsigned someValue = 0;
+static unsigned setup1_called = 0;
+static unsigned setup2_called = 0;
+static unsigned cleanup2_called = 0;
+
+static void setup1() {
+	someValue = 345;
+	setup1_called = 1;
 }
 
-test(Second) {
-	printf("From test 2");
+test(setup1, .setup = &setup1) {
+	test_assert_equal(345, someValue);
+}
+
+static void setup2() {
+	someValue = 123;
+	setup2_called = 1;
+}
+
+static void cleanup2() {
+	cleanup2_called = 1;
+}
+
+test(setup2_cleanup2, .setup = &setup2, .cleanup = &cleanup2) {
+	test_assert_equal(123, someValue);
+}
+
+test(verify_setup_cleanup) {
+	test_assert_true(setup1_called);
+	test_assert_true(setup2_called);
+	test_assert_true(cleanup2_called);
 }
