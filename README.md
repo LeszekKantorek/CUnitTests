@@ -17,7 +17,14 @@ test(MyTestName) {
 ```
 
 ## Test definition macro
-The test definition macro accepts additional parameters listed below: 
+The test definition macro accepts additional parameters listed below:
+
+* '.suite' - test suite name
+``` c
+static void setup(){ ... }
+test(TestName, .suite="name") { ... }
+```
+
 * '.setup' - pointer to function that will be executed before test
 ``` c
 static void setup(){ ... }
