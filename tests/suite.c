@@ -40,6 +40,12 @@ test(suite2, .suite = "suite2") {
 	suite2++;
 }
 
+static void setup() {}
+
+test(suite2_setup, .suite = "suite2", .setup = &setup) {
+	suite2++;
+}
+
 test(someOtherTest) {
 	other++;
 }
